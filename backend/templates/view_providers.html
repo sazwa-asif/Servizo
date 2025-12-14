@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-blue mb-0">Explore Service Providers</h2>
+
+    <form method="GET" class="d-flex">
+      <select name="category" class="form-select me-2" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+      <noscript><button class="btn btn-dark" type="submit">Filter</button></noscript>
+    </form>
+  </div>
+
+  {% if providers %}
+  <div class="row g-4">
+    {% for p in providers %}
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 rounded-4 p-3 text-center view-provider-card">
+        <img src="{{ url_for('static', filename='images/' + p.ServiceCategory|lower + '_logo.jpg') }}"
+             alt="{{ p.ServiceCategory }} logo"
+             class="mx-auto mb-3 rounded-circle border border-2 border-warning"
+             width="80" height="80">
+        <h5 class="fw-bold mb-1">{{ p.Name }}</h5>
+        <p class="text-muted mb-1">{{ p.ServiceCategory }}</p>
+        <p class="small text-secondary mb-1">📍 {{ p.Address }}</p>
+        <p class="mb-1 text-orange fw-semibold">
+          ⭐ {{ p.AvgRating or 'N/A' }} ({{ p.CompletedJobs }} jobs)
+        </p>
+        <a href="{{ url_for('view_provider_profile', provider_id=p.ServiceProviderID) }}" class="btn btn-sm mt-2">
+  View Profile
+</a>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center mt-4">No providers found in this category.</div>
+  {% endif %}
+</div>
+{% endblock %}

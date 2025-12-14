@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  
+  .register-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Left Side */
+  .left-panel {
+    flex: 0.7;
+    background: linear-gradient(135deg, #0A4C68 0%, #0D5A7D 50%, #0A4C68 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+    margin-left: 7rem;
+    margin-right: 0.5rem;
+    height: 90vh;
+    align-self: center;
+  }
+
+  .left-panel .overlay-text {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 6rem 2rem 2rem 2rem;
+  }
+
+  .left-panel .logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: 2rem;
+    filter: brightness(0) invert(1); 
+  }
+
+  .left-panel h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .left-panel p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Right Side Register Form */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 2rem;
+  }
+
+
+  .register-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 3rem;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .register-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+  }
+
+  .register-card h2 {
+    color: #0A4C68;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .register-card h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border-radius: 2px;
+  }
+
+  /* Form Elements */
+  .form-label {
+    color: #0A4C68;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    font-size: 1rem;
+  }
+
+  .form-control:focus {
+    border-color: #0A4C68;
+    box-shadow: 0 0 0 0.2rem rgba(10, 76, 104, 0.15);
+    background: white;
+  }
+
+  /* Submit Button */
+  .btn-info {
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(10, 76, 104, 0.3);
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  .btn-info:hover {
+    background: linear-gradient(45deg, #0D5A7D, #0A4C68);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10, 76, 104, 0.4);
+    color: white;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .register-container {
+      flex-direction: column;
+    }
+
+    .left-panel {
+      flex: none;
+      height: 300px;
+    }
+
+    .left-panel h1 {
+      font-size: 2rem;
+    }
+
+    .left-panel p {
+      font-size: 1rem;
+    }
+
+    .right-panel {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .register-card {
+      padding: 2rem;
+      margin: 1rem;
+    }
+  }
+</style>
+
+<div class="register-container">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <div class="overlay-text">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Servizo Logo" class="logo">
+      <h1>Join Servizo</h1>
+      <p>Become a valued customer and access our wide range of professional services. Get started today and experience quality service at your doorstep.</p>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div class="register-card">
+      <h2>Register as Customer</h2>
+
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phone Number</label>
+          <input type="text" name="phone" class="form-control" placeholder="+92XXXXXXXXXX" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <textarea name="address" class="form-control" rows="2" placeholder="Your complete address" required></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+        </div>
+
+        <button type="submit" class="btn btn-info w-100">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

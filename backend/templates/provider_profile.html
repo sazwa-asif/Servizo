@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <!-- Provider Profile Card -->
+  <div class="card shadow-sm border-0 rounded-4 p-4 provider-profile-card">
+    <div class="row align-items-center">
+      <div class="col-md-3 text-center mb-3 mb-md-0">
+        <img src="{{ url_for('static', filename=service_logo) }}"
+             alt="{{ provider.ServiceCategory }} logo"
+             class="rounded-circle border border-3 border-warning shadow-sm"
+             width="100" height="100">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-bold mb-2 text-orange">{{ provider.Name }}</h3>
+        <div class="row">
+          <div class="col-sm-6">
+            <p class="text-muted mb-2"><i class="bi bi-briefcase me-2"></i>{{ provider.ServiceCategory }}</p>
+            <p class="text-muted mb-2"><i class="bi bi-geo-alt me-2"></i>{{ provider.Address }}</p>
+            <p class="text-muted mb-2"><i class="bi bi-envelope me-2"></i>{{ provider.Email }}</p>
+          </div>
+          <div class="col-sm-6">
+            <p class="text-muted mb-2"><i class="bi bi-telephone me-2"></i>{{ provider.PhoneNo }}</p>
+            <p class="text-muted mb-2"><i class="bi bi-card-text me-2"></i>CNIC: {{ provider.CNIC }}</p>
+            {% if provider.BasePrice %}
+            <p class="text-muted mb-2"><i class="bi bi-cash me-2"></i>Base Price: Rs. {{ provider.BasePrice }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="rating-section mb-3">
+          <h6 class="mb-2 text-orange">⭐ Rating</h6>
+          {% if provider.AvgRating %}
+            <div class="rating-display">
+              <span class="fw-bold text-warning display-6">{{ provider.AvgRating }}</span><span class="text-muted">/5</span>
+            </div>
+            <small class="text-muted">({{ provider.CompletedJobs }} jobs)</small>
+          {% else %}
+            <span class="text-muted">No ratings yet</span>
+          {% endif %}
+        </div>
+        <button class="btn px-4 py-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+          <i class="bi bi-pencil-square me-2"></i>Edit Profile
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Section -->
+  {% if feedbacks %}
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h5 class="fw-bold text-orange mb-3">Customer Feedback</h5>
+    {% for fb in feedbacks %}
+      <div class="border rounded-3 p-3 mb-3 bg-white">
+        <p class="mb-1">
+          <strong>{{ fb.CustomerName }}</strong> — ⭐ {{ fb.Rating }}/5
+        </p>
+        {% if fb.Text %}
+          <p class="small mb-0 text-secondary">{{ fb.Text }}</p>
+        {% else %}
+          <p class="small mb-0 text-secondary fst-italic">No written feedback.</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-4">
+    You haven’t received any feedback yet.
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <form method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-orange" id="editProfileModalLabel">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+      
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">Name</label>
+            <input type="text" class="form-control" name="name" value="{{ provider.Name }}" required>
+          </div>
+
+        
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">Email</label>
+            <input type="email" class="form-control" name="email" value="{{ provider.Email }}" required>
+          </div>
+
+      
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">Phone</label>
+            <input type="text" class="form-control" name="phone" value="{{ provider.PhoneNo }}">
+          </div>
+
+  
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">CNIC</label>
+            <input type="text" class="form-control bg-light" value="{{ provider.CNIC }}" readonly>
+          </div>
+
+       
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">Service Category</label>
+            <input type="text" class="form-control bg-light" value="{{ provider.ServiceCategory or 'Not specified' }}" readonly>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-dark">Address</label>
+            <textarea class="form-control" name="address" rows="3">{{ provider.Address }}</textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-dark w-100">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

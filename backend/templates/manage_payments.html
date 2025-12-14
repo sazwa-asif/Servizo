@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-5">
+  <div class="d-flex align-items-center mb-4">
+    <i class="bi bi-cash-stack display-6 me-3" style="color: #ff7f2a;"></i>
+    <div>
+      <h2 class="fw-bold mb-1" style="color: #0a4c68;">Manage Payments</h2>
+      <p class="text-muted mb-0">Process provider payouts and customer refunds efficiently</p>
+    </div>
+  </div>
+
+  <!-- PENDING PROVIDER PAYMENTS -->
+  <div class="modern-card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #0a4c68 0%, #0d5a7a 100%); color: white; border: none; border-left: 4px solid #0a4c68; padding: 1.5rem 1rem;">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="bi bi-clock-history me-2"></i>
+        <h5 class="mb-0 fw-bold">Pending Provider Payouts</h5>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if pending %}
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead class="table-header-row">
+            <tr>
+              <th><i class="bi bi-hash me-1"></i>Booking ID</th>
+              <th><i class="bi bi-person me-1"></i>Customer</th>
+              <th><i class="bi bi-tools me-1"></i>Provider</th>
+              <th><i class="bi bi-calendar me-1"></i>Date</th>
+              <th><i class="bi bi-cash me-1"></i>Total Amount</th>
+              <th><i class="bi bi-wallet me-1"></i>Provider Gets (80%)</th>
+              <th><i class="bi bi-pie-chart me-1"></i>Admin Keeps (20%)</th>
+              <th><i class="bi bi-gear me-1"></i>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in pending %}
+            <tr class="table-data-row">
+              <td style="color: #0a4c68;"><strong>#{{ p.BookingID }}</strong></td>
+              <td style="color: #0a4c68;">{{ p.CustomerName }}</td>
+              <td style="color: #0a4c68;">{{ p.ProviderName }}</td>
+              <td style="color: #0a4c68;">{{ p.BookingDate }}</td>
+              <td style="color: #0a4c68;">PKR {{ "%.2f"|format(p.TotalAmount) }}</td>
+              <td style="color: #0a4c68;">PKR {{ "%.2f"|format(p.ProviderAmount) }}</td>
+              <td style="color: #0a4c68;">PKR {{ "%.2f"|format(p.AdminCommission) }}</td>
+              <td>
+                <a href="{{ url_for('payment_confirmation', payment_type='provider', booking_id=p.BookingID) }}" 
+                   class="btn btn-theme btn-sm">
+                  <i class="bi bi-credit-card me-1"></i>Pay Now
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="bi bi-check-circle"></i>
+        <h5>No Pending Provider Payouts</h5>
+        <p>All provider payouts have been processed.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- COMPLETED PROVIDER PAYMENTS -->
+  <div class="modern-card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #0a4c68 0%, #0d5a7a 100%); color: white; border: none; padding: 1.5rem 1rem;">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <h5 class="mb-0 fw-bold">Completed Provider Payouts</h5>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if paid %}
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead class="table-header-row">
+            <tr>
+              <th><i class="bi bi-receipt me-1"></i>Payout ID</th>
+              <th><i class="bi bi-hash me-1"></i>Booking ID</th>
+              <th><i class="bi bi-tools me-1"></i>Provider</th>
+              <th><i class="bi bi-cash me-1"></i>Amount Paid</th>
+              <th><i class="bi bi-pie-chart me-1"></i>Commission Earned</th>
+              <th><i class="bi bi-calendar-check me-1"></i>Date Paid</th>
+              <th><i class="bi bi-check-circle me-1"></i>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in paid %}
+            <tr class="table-data-row">
+              <td style="color: #0a4c68;">#{{ p.PayoutID }}</td>
+              <td style="color: #0a4c68;">#{{ p.BookingID }}</td>
+              <td style="color: #0a4c68;">{{ p.ProviderName }}</td>
+              <td style="color: #0a4c68;"><strong>PKR {{ "%.2f"|format(p.ProviderAmount) }}</strong></td>
+              <td style="color: #0a4c68;"><strong>PKR {{ "%.2f"|format(p.AdminCommission) }}</strong></td>
+              <td style="color: #0a4c68;">{{ p.PaidAt.strftime('%Y-%m-%d %H:%M') if p.PaidAt else 'N/A' }}</td>
+              <td><span class="badge bg-success">{{ p.Status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="bi bi-graph-up"></i>
+        <h5>No Completed Provider Payouts</h5>
+        <p>Provider payouts will appear here once processed.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- PENDING CUSTOMER REFUNDS -->
+  <div class="modern-card mb-4">
+    <div class="card-header" style="background: linear-gradient(135deg, #0a4c68 0%, #0d5a7a 100%); color: white; border: none; padding: 1.5rem 1rem;">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="bi bi-arrow-counterclockwise me-2"></i>
+        <h5 class="mb-0 fw-bold">Pending Customer Refunds</h5>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if pending_refunds %}
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead class="table-header-row">
+            <tr>
+              <th><i class="bi bi-hash me-1"></i>Booking ID</th>
+              <th><i class="bi bi-person me-1"></i>Customer</th>
+              <th><i class="bi bi-tools me-1"></i>Provider</th>
+              <th><i class="bi bi-cash me-1"></i>Paid Amount</th>
+              <th><i class="bi bi-calendar me-1"></i>Date</th>
+              <th><i class="bi bi-gear me-1"></i>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in pending_refunds %}
+            <tr class="table-data-row">
+              <td style="color: #0a4c68;"><strong>#{{ r.BookingID }}</strong></td>
+              <td style="color: #0a4c68;">{{ r.CustomerName }}</td>
+              <td style="color: #0a4c68;">{{ r.ProviderName }}</td>
+              <td style="color: #0a4c68;">PKR {{ "%.2f"|format(r.PaidAmount) }}</td>
+              <td style="color: #0a4c68;">{{ r.BookingDate }}</td>
+              <td>
+                <a href="{{ url_for('payment_confirmation', payment_type='refund', booking_id=r.BookingID) }}" 
+                   class="btn btn-danger btn-sm">
+                  <i class="bi bi-arrow-repeat me-1"></i> Refund Now
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="bi bi-check-circle"></i>
+        <h5>No Pending Refunds</h5>
+        <p>All customer refunds have been processed.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- COMPLETED CUSTOMER REFUNDS -->
+  <div class="modern-card">
+    <div class="card-header" style="background: linear-gradient(135deg, #0d5a7a 0%, #0a4c68 100%); color: white; border: none; padding: 1.5rem 1rem;">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <h5 class="mb-0 fw-bold">Completed Customer Refunds</h5>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if refunded %}
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead class="table-header-row">
+            <tr>
+              <th><i class="bi bi-hash me-1"></i>ID</th>
+              <th><i class="bi bi-person me-1"></i>Customer</th>
+              <th><i class="bi bi-tools me-1"></i>Provider</th>
+              <th><i class="bi bi-cash me-1"></i>Amount</th>
+              <th><i class="bi bi-calendar me-1"></i>Date</th>
+              <th><i class="bi bi-check-circle me-1"></i>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in refunded %}
+            <tr class="table-data-row">
+              <td style="color: #0a4c68;"><strong>#{{ r.BookingID }}</strong></td>
+              <td style="color: #0a4c68;">{{ r.CustomerName }}</td>
+              <td style="color: #0a4c68;">{{ r.ProviderName }}</td>
+              <td style="color: #0a4c68;"><strong>PKR {{ "%.2f"|format(r.PaidAmount) }}</strong></td>
+              <td style="color: #0a4c68;">{{ r.BookingDate }}</td>
+              <td><span class="badge bg-success">Refunded</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="bi bi-graph-up"></i>
+        <h5>No Completed Refunds</h5>
+        <p>Customer refunds will appear here once processed.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

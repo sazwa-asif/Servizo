@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="fw-bold mb-4" style="color: #0A4C68;">Customer Offers</h2>
+
+  {% if offers %}
+  <div class="table-responsive">
+    <table class="table table-hover table-striped align-middle shadow-sm rounded">
+      <thead class="table-dark">
+        <tr>
+          <th><i class="bi bi-person"></i> Customer</th>
+          <th><i class="bi bi-tools"></i> Service</th>
+          <th><i class="bi bi-calendar-date"></i> Date</th>
+          <th><i class="bi bi-clock"></i> Time</th>
+          <th><i class="bi bi-geo-alt"></i> Location</th>
+          <th><i class="bi bi-cash"></i> Offer</th>
+          <th><i class="bi bi-exclamation-triangle"></i> Problem</th>
+          <th><i class="bi bi-gear"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for offer in offers %}
+        <tr>
+          <td class="text-center" style="color: #0a4c68;">{{ offer.CustomerName }}</td>
+          <td class="text-center" style="color: #0a4c68;">{{ offer.ServiceName }}</td>
+          <td class="text-center" style="color: #0a4c68;">{{ offer.OfferDate }}</td>
+          <td class="text-center" style="color: #0a4c68;">{{ offer.OfferTime or '—' }}</td>
+          <td class="text-center truncate" title="{{ offer.Location }}" style="color: #0a4c68;">{{ offer.Location or '—' }}</td>
+          <td class="text-center" style="color: #0a4c68;">Rs. {{ offer.OfferedPrice }}</td>
+          <td class="text-center" style="color: #0a4c68;">{{ offer.IssueDescription or '—' }}</td>
+          <td class="text-center">
+
+            {% if offer.ValidUntil and offer.ValidUntil < current_time %}
+              <span class="badge bg-secondary">Expired</span>
+            {% else %}
+              {% if offer.OfferStatus == 'Pending' %}
+                <div class="btn-group" role="group">
+
+                  <!-- ACCEPT BUTTON ONLY -->
+                  <form method="POST" action="{{ url_for('respond_offer', offer_id=offer.OfferID) }}" class="d-inline">
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn btn-success btn-sm me-1">Accept</button>
+                  </form>
+
+                  <!-- CHAT BUTTON -->
+                  <a href="{{ url_for('offer_chat', offer_id=offer.OfferID) }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-chat-dots"></i> Chat
+                  </a>
+
+                </div>
+
+              {% elif offer.OfferStatus == 'Accepted' %}
+                <span class="badge bg-success me-2">Accepted</span>
+                <a href="{{ url_for('offer_chat', offer_id=offer.OfferID) }}" class="btn btn-primary btn-sm">
+                  <i class="bi bi-chat-dots"></i> Chat
+                </a>
+
+              {% elif offer.OfferStatus == 'Rejected' %}
+                <span class="badge bg-danger">Rejected</span>
+              {% endif %}
+            {% endif %}
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center">No offers available in your category right now.</div>
+  {% endif %}
+</div>
+
+{% block styles %}
+<style>
+  .truncate {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .table {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .table thead th {
+    border: none;
+    font-weight: 600;
+    background: #0A4C68;
+    color: white;
+    text-align: center;
+  }
+  .table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+  }
+  .table tbody tr:hover {
+    background-color: #fff3cd;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+  }
+  .table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+  .btn-group .btn {
+    border-radius: 0.25rem !important;
+    border: none;
+  }
+  .btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  .btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+  .btn-primary {
+    background-color: #0a4c68;
+    border-color: #0a4c68;
+  }
+  .btn-primary:hover {
+    background-color: #06384d;
+    border-color: #06384d;
+  }
+  .badge {
+    font-size: 0.75em;
+  }
+  .alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+  }
+</style>
+{% endblock %}
+{% endblock %}

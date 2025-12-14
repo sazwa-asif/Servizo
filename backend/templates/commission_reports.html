@@ -1,0 +1,791 @@
+{% extends "base.html" %}
+
+{% block title %}Commission Reports - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-line me-3"></i>
+                        Commission Reports
+                    </h1>
+                    <p class="page-subtitle">Comprehensive analytics and insights into commission earnings and revenue distribution</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card summary-card commission-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="card-icon-wrapper">
+                        <i class="fas fa-coins card-icon"></i>
+                    </div>
+                    <div class="card-content ms-3">
+                        <h6 class="card-subtitle mb-1">Total Commission Earned</h6>
+                        <h3 class="card-title mb-0">Rs. {{ "%.2f"|format(total_commission) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card summary-card bookings-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="card-icon-wrapper">
+                        <i class="fas fa-calendar-check card-icon"></i>
+                    </div>
+                    <div class="card-content ms-3">
+                        <h6 class="card-subtitle mb-1">Total Bookings</h6>
+                        <h3 class="card-title mb-0">{{ commissions|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card summary-card revenue-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="card-icon-wrapper">
+                        <i class="fas fa-chart-line card-icon"></i>
+                    </div>
+                    <div class="card-content ms-3">
+                        <h6 class="card-subtitle mb-1">Total Revenue</h6>
+                        <h3 class="card-title mb-0">Rs. {{ "%.2f"|format(total_revenue) }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6">
+            <div class="card summary-card rate-card h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="card-icon-wrapper">
+                        <i class="fas fa-percentage card-icon"></i>
+                    </div>
+                    <div class="card-content ms-3">
+                        <h6 class="card-subtitle mb-1">Commission Rate</h6>
+                        <h3 class="card-title mb-0">20%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card filter-card">
+                <div class="card-header filter-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter me-2"></i>
+                        Filter & Export Options
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('commission_reports') }}" class="row g-3 align-items-end">
+                        <div class="col-lg-3 col-md-6">
+                            <label for="start_date" class="form-label fw-semibold">Start Date</label>
+                            <input type="date" class="form-control form-control-lg" id="start_date" name="start_date"
+                                   value="{{ request.args.get('start_date', '') }}">
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label for="end_date" class="form-label fw-semibold">End Date</label>
+                            <input type="date" class="form-control form-control-lg" id="end_date" name="end_date"
+                                   value="{{ request.args.get('end_date', '') }}">
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label for="service_filter" class="form-label fw-semibold">Service Type</label>
+                            <select class="form-select form-select-lg" id="service_filter" name="service">
+                                <option value="">All Services</option>
+                                {% for service in services %}
+                                <option value="{{ service.ServiceID }}"
+                                        {% if request.args.get('service') == service.ServiceID|string %}selected{% endif %}>
+                                    {{ service.Name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                    <i class="fas fa-filter me-2"></i>Apply Filters
+                                </button>
+                                <a href="{{ url_for('commission_reports') }}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Commission Table -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card modern-card">
+                <div class="card-header table-header-modern d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>
+                        Commission Breakdown
+                    </h5>
+                    <button class="btn btn-light btn-lg" onclick="exportToCSV()">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    {% if commissions %}
+                    <div class="table-responsive">
+                        <table class="table modern-table mb-0" id="commissionTable">
+                            <thead class="table-header-row">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Provider</th>
+                                    <th>Service</th>
+                                    <th>Total Amount</th>
+                                    <th>Commission (20%)</th>
+                                    <th>Provider Share (80%)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for comm in commissions %}
+                                <tr class="table-data-row">
+                                    <td><strong>#{{ comm.BookingID }}</strong></td>
+                                    <td>{{ comm.BookingDate.strftime('%Y-%m-%d') if comm.BookingDate else 'N/A' }}</td>
+                                    <td>{{ comm.CustomerName }}</td>
+                                    <td>{{ comm.ProviderName }}</td>
+                                    <td><span class="badge service-badge">{{ comm.ServiceName }}</span></td>
+                                    <td><strong>Rs. {{ "%.2f"|format(comm.TotalAmount) }}</strong></td>
+                                    <td class="text-orange"><strong>Rs. {{ "%.2f"|format(comm.AdminCommission) }}</strong></td>
+                                    <td class="text-blue">Rs. {{ "%.2f"|format(comm.ProviderAmount) }}</td>
+                                    <td>
+                                        {% if comm.ProviderPaymentStatus == 'Paid' %}
+                                        <span class="badge bg-success">Paid</span>
+                                        {% elif comm.ProviderPaymentStatus == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Not Processed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-footer">
+                                <tr>
+                                    <th colspan="5" class="text-end fw-bold">Totals:</th>
+                                    <th class="fw-bold">Rs. {{ "%.2f"|format(total_revenue) }}</th>
+                                    <th class="text-orange fw-bold">Rs. {{ "%.2f"|format(total_commission) }}</th>
+                                    <th class="text-blue fw-bold">Rs. {{ "%.2f"|format(total_provider_share) }}</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h5>No Commission Records</h5>
+                        <p>No commission records found for the selected filters.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    {% if commissions %}
+    <!-- First Row: Monthly Trend & Revenue Split -->
+    <div class="row g-4 mb-4 justify-content-center">
+        <div class="col-lg-4 col-xl-4">
+            <div class="card chart-card h-100">
+                <div class="card-header chart-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Monthly Commission Trend
+                    </h5>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center" style="padding: 20px;">
+                    <canvas id="commissionChart" height="150" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-xl-4">
+            <div class="card chart-card h-100">
+                <div class="card-header chart-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Revenue Distribution
+                    </h5>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center" style="padding: 20px;">
+                    <canvas id="revenuePieChart" width="150" height="150" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row: Service & Provider Analysis -->
+    <div class="row g-4 mb-4 justify-content-center">
+        <div class="col-lg-5 col-xl-5">
+            <div class="card chart-card h-100">
+                <div class="card-header chart-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-concierge-bell me-2"></i>
+                        Commission by Service
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="serviceCommissionChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 col-xl-5">
+            <div class="card chart-card h-100">
+                <div class="card-header chart-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2"></i>
+                        Top Revenue Providers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="topProvidersChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third Row: Daily Activity -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card chart-card">
+                <div class="card-header chart-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Daily Commission Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dailyCommissionChart" height="60"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+ 
+    .summary-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(10, 76, 104, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        background: white;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(10, 76, 104, 0.2);
+    }
+
+    .summary-card .card-body {
+        padding: 24px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .summary-card .card-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 2rem;
+        opacity: 0.3;
+    }
+
+    .commission-card {
+        background: linear-gradient(135deg, #ff7f2a 0%, #ffb366 100%);
+        color: white;
+    }
+
+    .commission-card .card-icon {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .bookings-card {
+        background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+        color: white;
+    }
+
+    .bookings-card .card-icon {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .revenue-card {
+        background: linear-gradient(135deg, #ff7f2a 0%, #ffb366 100%);
+        color: white;
+    }
+
+    .revenue-card .card-icon {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .rate-card {
+        background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+        color: white;
+    }
+
+    .rate-card .card-icon {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .summary-card .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .summary-card .card-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    
+    .modern-card {
+        background-color: white;
+        border: 1px solid #ecf0f1;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-card:hover {
+        box-shadow: 0 20px 50px rgba(10, 76, 104, 0.15);
+    }
+
+    .table-header-modern {
+        background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+        color: white;
+        border: none;
+        padding: 20px 24px;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .modern-table {
+        color: #2c3e50;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 16px 12px;
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+        white-space: normal;
+        border: none;
+    }
+
+    .table-header-row th {
+        background-color: #0a4c68;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .table-data-row {
+        background-color: transparent;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .table-data-row:hover {
+        background-color: rgba(10, 76, 104, 0.08);
+        border-left: 4px solid #0a4c68;
+    }
+
+    .table-data-row td {
+        border-bottom: 1px solid rgba(10, 76, 104, 0.1);
+        color: #2c3e50;
+    }
+
+    .service-badge {
+        display: inline-block;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #0a4c68;
+        background-color: rgba(10, 76, 104, 0.18);
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+   
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h5 {
+        color: #6c757d;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    /* Chart Cards */
+    .card-header {
+        background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+        color: white;
+        border: none;
+        padding: 16px 20px;
+    }
+
+    .card-header h5 {
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Page title and subtitle */
+    .page-title, .page-subtitle {
+        color: #0a4c68;
+    }
+
+    /* Filters button */
+    .btn-primary {
+        background-color: #0a4c68 !important;
+        border-color: #0a4c68 !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .summary-card .card-body {
+            padding: 16px;
+        }
+
+        .summary-card .card-icon {
+            font-size: 1.5rem;
+            top: 12px;
+            right: 12px;
+        }
+
+        .summary-card .card-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+   
+    // Chart data from backend
+    const chartData = {
+        monthlyLabels: JSON.parse(`{{ monthly_labels | tojson | safe }}` || '[]'),
+        monthlyCommission: JSON.parse(`{{ monthly_commission | tojson | safe }}` || '[]'),
+        monthlyRevenue: JSON.parse(`{{ monthly_revenue | tojson | safe }}` || '[]'),
+        serviceNames: JSON.parse(`{{ service_names | tojson | safe }}` || '[]'),
+        serviceCommissions: JSON.parse(`{{ service_commissions | tojson | safe }}` || '[]'),
+        topProviderNames: JSON.parse(`{{ top_provider_names | tojson | safe }}` || '[]'),
+        topProviderRevenues: JSON.parse(`{{ top_provider_revenues | tojson | safe }}` || '[]'),
+        dailyLabels: JSON.parse(`{{ daily_labels | tojson | safe }}` || '[]'),
+        dailyCommissions: JSON.parse(`{{ daily_commissions | tojson | safe }}` || '[]'),
+        totalCommission: parseFloat(`{{ total_commission }}` || '0'),
+        totalProviderShare: parseFloat(`{{ total_provider_share }}` || '0'),
+        totalRevenue: parseFloat(`{{ total_revenue }}` || '0')
+    };
+
+    // Export to CSV function
+    function exportToCSV() {
+        const table = document.getElementById('commissionTable');
+        if (!table) return;
+
+        let csv = [];
+        const headers = [];
+
+        table.querySelectorAll('thead th').forEach(th => {
+            headers.push(th.textContent.trim());
+        });
+        csv.push(headers.join(','));
+
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const rowData = [];
+            row.querySelectorAll('td').forEach(td => {
+                let text = td.textContent.trim();
+                text = text.replace(/,/g, '');
+                text = text.replace(/Rs\./g, '');
+                rowData.push('"' + text + '"');
+            });
+            csv.push(rowData.join(','));
+        });
+
+        const csvContent = csv.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'commission_report_' + new Date().toISOString().split('T')[0] + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
+    // Function to initialize charts
+    function initializeCharts() {
+        // 1. Monthly Commission Trend
+        const commissionChartCanvas = document.getElementById('commissionChart');
+        if (commissionChartCanvas) {
+            try {
+                new Chart(commissionChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.monthlyLabels,
+                        datasets: [
+                            {
+                                label: 'Commission Earned',
+                                data: chartData.monthlyCommission,
+                                backgroundColor: 'rgba(255, 127, 42, 0.8)',
+                                borderColor: 'rgba(255, 127, 42, 1)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Total Revenue',
+                                data: chartData.monthlyRevenue,
+                                backgroundColor: 'rgba(10, 76, 104, 0.8)',
+                                borderColor: 'rgba(10, 76, 104, 1)',
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(val) { return 'Rs. ' + val.toFixed(0); }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error('Error rendering Monthly Chart:', e);
+            }
+        }
+
+        // 2. Revenue Pie Chart
+        const revenuePieChartCanvas = document.getElementById('revenuePieChart');
+        if (revenuePieChartCanvas) {
+            try {
+                if (chartData.totalRevenue > 0) {
+                    new Chart(revenuePieChartCanvas, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Admin Commission (20%)', 'Provider Share (80%)'],
+                            datasets: [{
+                                data: [chartData.totalCommission, chartData.totalProviderShare],
+                                backgroundColor: [
+                                    'rgba(255, 127, 42, 0.8)',
+                                    'rgba(10, 76, 104, 0.8)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 127, 42, 1)',
+                                    'rgba(10, 76, 104, 1)'
+                                ],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            var val = ctx.parsed;
+                                            var percent = (val / chartData.totalRevenue * 100).toFixed(1);
+                                            return ctx.label + ': Rs. ' + val.toFixed(2) + ' (' + percent + '%)';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch(e) {
+                console.error('Error rendering Pie Chart:', e);
+            }
+        }
+
+        // 3. Service-wise Commission
+        const serviceCommissionChartCanvas = document.getElementById('serviceCommissionChart');
+        if (serviceCommissionChartCanvas) {
+            try {
+                new Chart(serviceCommissionChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.serviceNames,
+                        datasets: [{
+                            label: 'Commission by Service',
+                            data: chartData.serviceCommissions,
+                            backgroundColor: 'rgba(255, 127, 42, 0.8)',
+                            borderColor: 'rgba(255, 127, 42, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(val) { return 'Rs. ' + val.toFixed(0); }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error('Error rendering Service Chart:', e);
+            }
+        }
+
+        // 4. Top Providers Revenue
+        const topProvidersChartCanvas = document.getElementById('topProvidersChart');
+        if (topProvidersChartCanvas) {
+            try {
+                new Chart(topProvidersChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.topProviderNames,
+                        datasets: [{
+                            label: 'Total Revenue Generated',
+                            data: chartData.topProviderRevenues,
+                            backgroundColor: 'rgba(10, 76, 104, 0.8)',
+                            borderColor: 'rgba(10, 76, 104, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(val) { return 'Rs. ' + val.toFixed(0); }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error('Error rendering Top Providers Chart:', e);
+            }
+        }
+
+        // 5. Daily Commission Trend
+        const dailyCommissionChartCanvas = document.getElementById('dailyCommissionChart');
+        if (dailyCommissionChartCanvas) {
+            try {
+                new Chart(dailyCommissionChartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.dailyLabels,
+                        datasets: [{
+                            label: 'Daily Commission',
+                            data: chartData.dailyCommissions,
+                            borderColor: 'rgba(255, 127, 42, 1)',
+                            backgroundColor: 'rgba(255, 127, 42, 0.1)',
+                            fill: true,
+                            borderWidth: 3,
+                            tension: 0.4,
+                            pointBackgroundColor: 'rgba(255, 127, 42, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(val) { return 'Rs. ' + val.toFixed(0); }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
+                        }
+                    }
+                });
+            } catch(e) {
+                console.error('Error rendering Daily Chart:', e);
+            }
+        }
+    }
+
+    // Initialize charts when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeCharts);
+</script>
+{% endblock %}

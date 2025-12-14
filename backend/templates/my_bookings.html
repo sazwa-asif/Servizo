@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+:root {
+  --primary-bg: #0A4C68;
+  --secondary-bg: #0d5a7d;
+  --accent: #4A90E2;
+  --light-bg: #f8f9fa;
+  --text-light: #ffffff;
+  --text-dark: #2c3e50;
+  --text-muted: #7f8c8d;
+  --border: #ecf0f1;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.jobs-page {
+  background: white;
+  min-height: 100vh;
+  color: var(--text-dark);
+}
+
+.header-section h1 {
+  color: var(--primary-bg);
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+}
+
+.header-section p {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.modern-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.modern-card:hover {
+  box-shadow: 0 20px 50px rgba(10, 76, 104, 0.15) !important;
+}
+
+.modern-table {
+  color: var(--text-dark);
+  table-layout: fixed;
+  width: 100%;
+}
+
+
+.modern-table th,
+.modern-table td {
+  width: 11.11%; 
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word; 
+  white-space: normal; 
+  padding: 16px 10px;
+}
+
+/* Header */
+.table-header-row th {
+  background-color: var(--primary-bg);
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.table-data-row {
+  background-color: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.table-data-row:hover {
+  background-color: rgba(10, 76, 104, 0.08);
+  border-left: 4px solid var(--primary-bg);
+}
+
+.table-data-row td {
+  border-bottom: 1px solid rgba(10, 76, 104, 0.1);
+  color: var(--text-dark);
+}
+
+/* Badges and buttons */
+.customer-badge,
+.date-badge,
+.location-badge,
+.issue-text {
+  display: inline-block;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-bg);
+  background-color: rgba(10, 76, 104, 0.18);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  overflow: visible;
+  position: relative;
+}
+
+.btn-outline-primary {
+  border-color: var(--primary-bg);
+  color: var(--primary-bg);
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-bg);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(10, 76, 104, 0.3);
+}
+
+.btn-info {
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-info:hover {
+  background-color: #357ABD;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+/* Dropdown Menu */
+.status-dropdown-menu {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+  margin-top: 4px;
+  min-width: 200px;
+  position: absolute;
+  z-index: 1050;
+  overflow: visible !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.status-dropdown-menu .dropdown-item {
+  color: var(--text-dark);
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+.status-dropdown-menu .dropdown-item:hover {
+  background-color: rgba(10, 76, 104, 0.1);
+  color: var(--primary-bg);
+  transform: translateX(4px);
+}
+
+.chat-btn {
+  background-color: #0a4c68 !important;
+  color: white !important;
+}
+
+.chat-btn i {
+  color: white !important;
+}
+
+.status-dropdown-menu .dropdown-item i {
+  font-size: 1rem;
+  width: 16px;
+  text-align: center;
+}
+
+.status-dropdown-menu .dropdown-divider {
+  margin: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .table-header-row th {
+    font-size: 0.75rem;
+    padding: 10px 6px;
+  }
+
+  .table-data-row td {
+    font-size: 0.85rem;
+    padding: 10px 6px;
+  }
+
+  .action-cell {
+    flex-direction: column;
+  }
+
+  .btn-outline-primary,
+  .btn-info {
+    width: 100%;
+  }
+
+  .status-dropdown-menu {
+    min-width: 180px;
+  }
+}
+</style>
+
+<div class="container my-5">
+
+  <!-- OFFERS SECTION -->
+  <h2 class="fw-bold mb-4" style="color: #0a4c68;">My Offers</h2>
+  <p class="text-muted">See the offers you’ve sent to service providers and their status.</p>
+
+  <div class="card shadow-sm p-3 mb-5">
+    {% if offers %}
+    <table class="table table-borderless modern-table">
+      <thead>
+        <tr class="table-header-row">
+          <th><i class="bi bi-hash me-2"></i>ID</th>
+          <th><i class="bi bi-tools me-2"></i>Service</th>
+          <th><i class="bi bi-calendar3 me-2"></i>Date</th>
+          <th><i class="bi bi-clock me-2"></i>Time</th>
+          <th><i class="bi bi-cash me-2"></i>Price</th>
+          <th><i class="bi bi-info-circle me-2"></i>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in offers %}
+        <tr>
+          <td>{{ o.OfferID }}</td>
+          <td>{{ o.ServiceName }}</td>
+          <td>{{ o.OfferDate }}</td>
+          <td>{{ o.OfferTime or '' }}</td>
+          <td>Rs. {{ o.OfferedPrice }}</td>
+          <td>
+            {% if o.OfferStatus == "Pending" %}
+              <div class="d-flex flex-column align-items-center gap-2">
+                <span class="badge bg-warning"><i class="bi bi-clock me-1"></i>Pending</span>
+                {% if o.ChatActive %}
+                  <a href="{{ url_for('offer_chat', offer_id=o.OfferID) }}" class="btn btn-primary btn-sm chat-btn"><i class="bi bi-chat-dots me-1"></i>Chat</a>
+                {% endif %}
+              </div>
+            {% elif o.OfferStatus == "Accepted" %}
+              <div class="d-flex flex-column align-items-center gap-2">
+                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Accepted</span>
+                <a href="{{ url_for('offer_chat', offer_id=o.OfferID) }}" class="btn btn-primary btn-sm chat-btn"><i class="bi bi-chat-dots me-1"></i>Chat</a>
+                <a href="{{ url_for('pay_offer', offer_id=o.OfferID) }}" class="btn btn-primary btn-sm">Pay & Book</a>
+              </div>
+            {% elif o.OfferStatus == "Rejected" %}
+              <span class="badge bg-danger">Rejected</span>
+            {% elif o.OfferStatus == "Expired" %}
+              <span class="badge bg-secondary">Expired</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">You haven’t made any offers yet.</p>
+    {% endif %}
+  </div>
+
+<!-- BOOKINGS SECTION -->
+<h2 class="fw-bold mb-4" style="color: #0a4c68;">My Bookings</h2>
+<p class="text-muted">Track the status of your confirmed bookings.</p>
+
+  <div class="card border-0 shadow-xl modern-card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        {% if bookings %}
+        <table class="table table-borderless modern-table mb-0">
+          <thead>
+            <tr class="table-header-row">
+              <th><i class="bi bi-hash me-2"></i>ID</th>
+              <th><i class="bi bi-tools me-2"></i>Service</th>
+              <th><i class="bi bi-person-circle me-2"></i>Provider</th>
+              <th><i class="bi bi-calendar3 me-2"></i>Date</th>
+              <th><i class="bi bi-clock me-2"></i>Time</th>
+              <th><i class="bi bi-cash me-2"></i>Amount</th>
+              <th><i class="bi bi-info-circle me-2"></i>Status</th>
+              <th><i class="bi bi-wallet2 me-2"></i>Payment</th>
+              <th><i class="bi bi-gear me-2"></i>Actions</th>
+            </tr>
+          </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td>{{ b.BookingID }}</td>
+        <td>{{ b.ServiceName }}</td>
+        <td>{{ b.ProviderEmail }}</td>
+        <td>{{ b.BookingDate }}</td>
+        <td>{{ b.BookingTime or '' }}</td>
+        <td>Rs. {{ b.FinalAmount }}</td>
+        
+        <!-- STATUS COLUMN -->
+        <td>
+          {% if b.Status == "Scheduled" %}
+            <span class="badge bg-warning"><i class="bi bi-calendar-event me-1"></i>Scheduled</span>
+          {% elif b.Status == "In Progress" %}
+            <span class="badge bg-info"><i class="bi bi-play-circle me-1"></i>In Progress</span>
+          {% elif b.Status == "Completed" %}
+            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Completed</span>
+          {% elif b.Status == "Incomplete" %}
+            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Incomplete</span>
+          {% elif b.Status == "Cancelled" %}
+            <span class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i>Cancelled</span>
+          {% endif %}
+          
+        </td>
+        
+        <!-- PAYMENT COLUMN -->
+        <td>
+          {% if b.PaymentStatus == 'Completed' %}
+            <span class="badge bg-success">Paid</span>
+          {% elif b.PaymentStatus == 'Refund_Pending' %}
+            <span class="badge bg-warning">Refund Pending</span>
+          {% elif b.PaymentStatus == 'Refunded' %}
+            <span class="badge bg-info">Refunded</span>
+          {% else %}
+            <span class="badge bg-warning"><i class="bi bi-clock me-1"></i>Pending</span>
+          {% endif %}
+        </td>
+        
+
+        <!-- ACTIONS COLUMN -->
+<td>
+  {% if b.Status in ['Scheduled', 'In Progress'] %}
+    <div class="action-cell">
+      <div class="btn-group me-2" role="group">
+        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+          <i class="bi bi-pencil-square me-1"></i>Update
+        </button>
+        <ul class="dropdown-menu dropdown-menu-light status-dropdown-menu">
+          <li><a class="dropdown-item chat-btn" href="{{ url_for('offer_chat', offer_id=b.OfferID) }}"><i class="bi bi-chat-dots"></i><span>Chat</span></a></li>
+          
+          <!-- Mark Complete  -->
+          <li>
+            <form action="{{ url_for('mark_booking_complete', booking_id=b.BookingID) }}" method="POST" class="d-inline">
+              <input type="hidden" name="action" value="complete">
+              <button type="submit" class="dropdown-item" onclick="return confirm('Mark this job as completed?');">
+                <i class="bi bi-check-circle"></i><span>Mark Complete</span>
+              </button>
+            </form>
+          </li>
+          
+          <li><hr class="dropdown-divider"></li>
+          
+          <!-- Mark Incomplete  -->
+          <li>
+            <form action="{{ url_for('mark_booking_complete', booking_id=b.BookingID) }}" method="POST" class="d-inline">
+              <input type="hidden" name="action" value="incomplete">
+              <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Mark this job as incomplete? This will request a refund.');">
+                <i class="bi bi-x-circle"></i><span>Mark Incomplete</span>
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  {% elif b.Status == 'Completed' %}
+    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Completed</span>
+  {% elif b.Status == 'Incomplete' %}
+    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Incomplete</span>
+  {% elif b.Status == 'Cancelled' %}
+    <span class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i>Cancelled</span>
+  {% endif %}
+</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state text-center py-5">
+          <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+          <h5 class="text-muted fw-light">No bookings found</h5>
+          <p class="text-muted small">Your confirmed bookings will appear here</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

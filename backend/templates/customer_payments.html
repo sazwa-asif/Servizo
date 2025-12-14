@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);">
+        <!-- Header -->
+        <div class="card-header text-white text-center py-5 position-relative" style="background: linear-gradient(135deg, #0A4C68 0%, #0D5A7A 50%, #0A4C68 100%);">
+          <div class="position-relative">
+            <i class="fas fa-shield-alt fa-2x mb-3 opacity-75"></i>
+            <h1 class="fw-bold mb-2 display-6">Secure Payment Portal</h1>
+            <p class="mb-0 fs-5">Protected Transaction</p>
+          </div>
+        </div>
+
+        <div class="card-body p-5">
+          <!-- Service Summary Card -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card border-0 shadow-sm bg-light rounded-3">
+                <div class="card-body p-4">
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-concierge-bell text-primary me-3 fa-lg"></i>
+                        <h5 class="mb-0 fw-bold">{{ offer.ServiceName }}</h5>
+                      </div>
+                      <p class="text-muted mb-0">Service booking</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                      <div class="bg-white rounded-pill px-4 py-2 shadow-sm d-inline-block">
+                        <span class="text-muted small">Total Amount</span>
+                        <div class="fw-bold text-success fs-4">Rs. {{ offer.OfferedPrice }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Details -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                  <i class="fas fa-credit-card fa-2x text-info mb-3"></i>
+                  <h6 class="fw-bold mb-2">Payment Method</h6>
+                  <p class="text-muted small mb-0">Secure Stripe Checkout</p>
+                  <div class="mt-3">
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                      <i class="fas fa-credit-card me-1"></i>Powered by Stripe
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                  <i class="fas fa-lock fa-2x text-success mb-3"></i>
+                  <h6 class="fw-bold mb-2">Security</h6>
+                  <p class="text-muted small mb-0">256-bit SSL Encryption</p>
+                  <div class="mt-3">
+                    <span class="badge bg-success">Bank-level Security</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Button -->
+          <div class="text-center">
+            <button id="checkout-btn" class="btn btn-lg text-white fw-bold py-4 px-5 rounded-pill position-relative overflow-hidden" style="background: linear-gradient(135deg, #0A4C68 0%, #0D5A7A 100%); border: none; transition: all 0.4s ease; box-shadow: 0 8px 25px rgba(10, 76, 104, 0.3);">
+              <span class="position-relative z-index-1">
+                <i class="fas fa-credit-card me-3"></i>Complete Secure Payment
+                <i class="fas fa-arrow-right ms-2"></i>
+              </span>
+              <div class="position-absolute top-0 start-0 w-100 h-100 bg-white opacity-0" style="transition: opacity 0.3s ease;"></div>
+            </button>
+            <p class="text-muted mt-3 small">
+              <i class="fas fa-info-circle me-1"></i>You will be redirected to Stripe's secure payment page
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer bg-light text-center py-3">
+          <small class="text-muted">
+            <i class="fas fa-shield-alt me-1"></i>Protected by SSL • Powered by Stripe
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(10, 76, 104, 0.4);
+}
+#checkout-btn:active {
+  transform: translateY(0);
+}
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+</style>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+const stripe = Stripe('{{ stripe_pub_key }}');
+
+document.getElementById('checkout-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('checkout-btn');
+  const originalHTML = btn.innerHTML;
+
+  btn.disabled = true;
+  btn.innerHTML = `
+    <span class="position-relative z-index-1">
+      <i class="fas fa-spinner fa-spin me-2"></i>Initializing Secure Payment...
+    </span>
+  `;
+
+  try {
+    const response = await fetch('/create-checkout-session/{{ offer.OfferID }}', { method: 'POST' });
+    const session = await response.json();
+    if(session.error) {
+      alert('Payment Error: ' + session.error);
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+      return;
+    }
+
+    const result = await stripe.redirectToCheckout({ sessionId: session.id });
+    if (result.error) {
+      alert('Redirect Error: ' + result.error.message);
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+    }
+  } catch(e) {
+    alert('Connection Error: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+});
+</script>
+{% endblock %}

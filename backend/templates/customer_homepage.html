@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="fw-bold mb-4" style="color: #0A4C68;">Customer Dashboard</h2>
+
+  <div class="row g-4">
+    <!-- View Providers -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-people display-4 text-info"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">View Service Providers</h5>
+          <p>Browse providers by category and check their ratings & feedback.</p>
+          <a href="{{ url_for('view_providers') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">View Providers</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book a Service -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-bag-check display-4 text-info"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Book a Service</h5>
+          <p>Browse available services and make a booking.</p>
+          <a href="{{ url_for('book_service') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">Book Now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Bookings -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-calendar-check display-4 text-info"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">My Bookings</h5>
+          <p>View, track, and manage your booked services anytime.</p>
+          <a href="{{ url_for('my_bookings') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">View Bookings</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-chat-dots display-4 text-info"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Give Feedback</h5>
+          <p>Share your experience and rate service providers.</p>
+          <a href="{{ url_for('customer_feedback') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">Give Feedback</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

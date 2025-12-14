@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-title">
+  <i class="bi bi-calendar-check"></i>
+  Book a Service
+</div>
+
+<div class="form-section">
+  <form method="POST">
+
+    <!-- Service Selection -->
+    <div class="form-group">
+      <label class="form-label"><i class="bi bi-gear"></i> Select Service</label>
+      <select name="service_id" class="form-control modern-input" required>
+        <option value="">Select a Service</option>
+        {% for service in services %}
+        <option value="{{ service['ServiceID'] }}">{{ service['Name'] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- price offer input -->
+    <div class="form-group">
+      <label class="form-label"><i class="bi bi-cash"></i> Your Offer (Rs.)</label>
+      <input type="number" id="offer_price" name="offer_price"
+             class="form-control modern-input" placeholder="Enter your offer"
+             min="0" step="100" required>
+    </div>
+
+    <!-- Suggested price display area -->
+    <p id="suggestedPriceBox"
+       class="fst-italic small"
+       style="display:none; margin-top: -5px; margin-bottom: 15px;"></p>
+
+    <!-- Date and Time Selection -->
+    <div class="form-row">
+      <div class="form-group half">
+        <label class="form-label"><i class="bi bi-calendar-event"></i> Preferred Date</label>
+        <input type="date" name="offer_date" class="form-control modern-input" min="{{ today }}">
+      </div>
+      <div class="form-group half">
+        <label class="form-label"><i class="bi bi-clock"></i> Preferred Time</label>
+        <input type="time" name="offer_time" class="form-control modern-input" required>
+      </div>
+    </div>
+
+    <!-- Service description -->
+    <div class="form-group">
+      <label class="form-label"><i class="bi bi-exclamation-circle"></i> Describe the Issue</label>
+      <textarea name="issue" class="form-control modern-input" rows="3"
+                placeholder="Describe the problem or service request in detail..." required></textarea>
+    </div>
+
+    <!-- Location Selection with Map -->
+    <div class="form-group">
+      <label class="form-label"><i class="bi bi-geo-alt"></i> Select Service Location</label>
+      <input type="text" id="locationInput" name="location"
+             class="form-control modern-input mb-2"
+             placeholder="Search or click on map to select location" required>
+      <div id="map" style="height: 300px; border-radius: 8px;"></div>
+
+      <!-- Hidden fields to store coordinates -->
+      <input type="hidden" id="latitude" name="latitude">
+      <input type="hidden" id="longitude" name="longitude">
+    </div>
+
+    <button type="submit" class="btn btn-primary modern-btn">Send Offer</button>
+  </form>
+</div>
+
+
+<style>
+
+  .page-title {
+    color: #0B506D;
+    font-weight: 700;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    font-size: 32px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .page-title i {
+    font-size: 34px;
+  }
+
+  /* Form container */
+  .form-section {
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* Form element */
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+
+  .form-group.half {
+    flex: 1;
+  }
+
+  /* Label  */
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #0B506D;
+    font-size: 16px;
+  }
+
+  .form-label i {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  /* Input field */
+  .modern-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .modern-input:focus {
+    outline: none;
+    border-color: #0B506D;
+    box-shadow: 0 0 0 3px rgba(11, 80, 109, 0.1);
+  }
+
+  .modern-input::placeholder {
+    color: #999;
+  }
+
+  /* Submit button */
+  .modern-btn {
+    background: linear-gradient(135deg, #0B506D 0%, #094861 100%);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 30px auto 0;
+  }
+
+  .modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 80, 109, 0.3);
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .form-section {
+      padding: 20px;
+    }
+
+    .page-title {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+</style>
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Get references to form elements
+  const serviceSelect = document.querySelector('select[name="service_id"]');
+  const suggestedPriceBox = document.getElementById("suggestedPriceBox");
+  const offerInput = document.getElementById("offer_price");
+
+  let suggestedPrice = null;
+  let debounceTimer = null;
+
+  // Handle service selection change
+  serviceSelect.addEventListener("change", function() {
+    const serviceId = this.value;
+    suggestedPriceBox.style.display = "none";            // Hide warning initially
+    suggestedPrice = null;
+
+    if (!serviceId) return;
+
+    // Fetch suggested price from server
+    fetch(`/get_suggested_price/${serviceId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.suggested_price) {
+          suggestedPrice = parseFloat(data.suggested_price);
+          suggestedPriceBox.textContent = "System has a suggested price range for this service.";
+          suggestedPriceBox.className = "fst-italic small text-muted";
+        } else {
+          suggestedPriceBox.textContent = "No suggested price available for this service.";
+          suggestedPriceBox.className = "fst-italic small text-muted";
+        }
+      })
+      .catch(() => {
+        suggestedPriceBox.textContent = "Error loading suggested price.";
+        suggestedPriceBox.className = "fst-italic small text-danger";
+        suggestedPriceBox.style.display = "block";
+      });
+  });
+
+  // Validate offer price as user types
+  offerInput.addEventListener("input", function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      const offerValue = parseFloat(this.value);
+
+      if (!offerValue || offerValue <= 0 || !suggestedPrice) {
+        suggestedPriceBox.style.display = "none";
+        return;
+      }
+
+      suggestedPriceBox.style.display = "block";
+      
+      // Provide price guidance to user
+      if (offerValue < suggestedPrice * 0.8) {
+        suggestedPriceBox.textContent = "Your offer seems too low compared to expected range.";
+        suggestedPriceBox.className = "fst-italic small text-danger";
+      } else {
+        suggestedPriceBox.textContent = "Looks good, your offer is within reasonable range.";
+        suggestedPriceBox.className = "fst-italic small text-success";
+      }
+    }, 700); // Delay validation to avoid excessive updates
+  });
+
+// Initialize map with default location Karachi
+const map = L.map('map').setView([24.8607, 67.0011], 12);
+  
+  // Add open street map tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  let marker;
+
+  // Handle map clicks to select location
+  map.on('click', function(e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+
+    // Remove existing marker and add new one
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+
+    // Store coordinates in hidden fields
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lng;
+
+    // Reverse geocode to get address
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+      .then(res => res.json())
+      .then(data => {
+        const address = data.display_name || '';
+        document.getElementById('locationInput').value = address;
+      });
+  });
+
+  // Add search functionality to map
+  L.Control.geocoder({ defaultMarkGeocode: false })
+    .on('markgeocode', function(e) {
+      const latlng = e.geocode.center;
+      if (marker) map.removeLayer(marker);
+      marker = L.marker(latlng).addTo(map);
+      map.setView(latlng, 15);
+      document.getElementById('latitude').value = latlng.lat.toFixed(6);
+      document.getElementById('longitude').value = latlng.lng.toFixed(6);
+      document.getElementById('locationInput').value = e.geocode.name;
+    })
+    .addTo(map);
+});
+</script>
+{% endblock %}

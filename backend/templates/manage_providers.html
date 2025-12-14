@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold" style="color: #0B506D;">Manage Service Providers</h2>
+
+    <style>
+      .modern-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: white;
+      }
+
+      .modern-table thead th {
+        background: linear-gradient(135deg, #0B506D, #094861);
+        color: white;
+        font-weight: 600;
+        padding: 15px 12px;
+        border: none;
+        text-align: center;
+      }
+
+      .modern-table tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      .modern-table tbody tr:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .modern-table tbody td {
+        padding: 12px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .modern-table .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin: 2px;
+        font-size: 11px;
+        padding: 5px 8px;
+      }
+
+      .modern-table .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+
+    <!-- Pending Providers -->
+    <h4 class="text-warning fw-bold" style="color: #0a4c68 !important;">Pending Providers</h4>
+    {% if pending_providers %}
+    <table class="table modern-table">
+        <thead>
+            <tr>
+                <th><i class="bi bi-hash"></i> ID</th><th><i class="bi bi-person"></i> Name</th><th><i class="bi bi-envelope"></i> Email</th><th><i class="bi bi-telephone"></i> Phone</th><th><i class="bi bi-card-text"></i> CNIC</th><th><i class="bi bi-geo-alt"></i> Address</th><th><i class="bi bi-tools"></i> Category</th><th><i class="bi bi-gear"></i> Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for provider in pending_providers %}
+            <tr>
+                <td>{{ provider.ServiceProviderID }}</td>
+                <td>{{ provider.Name }}</td>
+                <td>{{ provider.Email }}</td>
+                <td>{{ provider.PhoneNo }}</td>
+                <td>{{ provider.CNIC }}</td>
+                <td>{{ provider.Address }}</td>
+                <td>{{ provider.ServiceCategory }}</td>
+                <td>
+                    <a href="{{ url_for('update_provider_status', provider_id=provider.ServiceProviderID, action='approve') }}" class="btn btn-success btn-sm">Approve</a>
+                    <a href="{{ url_for('update_provider_status', provider_id=provider.ServiceProviderID, action='reject') }}" class="btn btn-danger btn-sm">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No pending providers!</p>
+    {% endif %}
+
+    <!-- Approved Providers -->
+    <h4 class="text-success mt-5 fw-bold" style="color: #0a4c68 !important;">Approved Providers</h4>
+    {% if approved_providers %}
+    <table class="table modern-table">
+        <thead>
+            <tr>
+                <th><i class="bi bi-hash"></i> ID</th><th><i class="bi bi-person"></i> Name</th><th><i class="bi bi-envelope"></i> Email</th><th><i class="bi bi-telephone"></i> Phone</th><th><i class="bi bi-card-text"></i> CNIC</th><th><i class="bi bi-geo-alt"></i> Address</th><th><i class="bi bi-tools"></i> Category</th><th><i class="bi bi-gear"></i> Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for provider in approved_providers %}
+            <tr>
+                <td>{{ provider.ServiceProviderID }}</td>
+                <td>{{ provider.Name }}</td>
+                <td>{{ provider.Email }}</td>
+                <td>{{ provider.PhoneNo }}</td>
+                <td>{{ provider.CNIC }}</td>
+                <td>{{ provider.Address }}</td>
+                <td>{{ provider.ServiceCategory }}</td>
+                <td>
+                    <a href="{{ url_for('update_provider_status', provider_id=provider.ServiceProviderID, action='reject') }}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to reject this provider?');">
+                       Reject
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No approved providers yet.</p>
+    {% endif %}
+
+    <!-- Rejected Providers -->
+    <h4 class="text-danger mt-5 fw-bold" style="color: #0a4c68 !important;">Rejected Providers</h4>
+    {% if rejected_providers %}
+    <table class="table modern-table">
+        <thead>
+            <tr>
+                <th><i class="bi bi-hash"></i> ID</th><th><i class="bi bi-person"></i> Name</th><th><i class="bi bi-envelope"></i> Email</th><th><i class="bi bi-telephone"></i> Phone</th><th><i class="bi bi-card-text"></i> CNIC</th><th><i class="bi bi-geo-alt"></i> Address</th><th><i class="bi bi-tools"></i> Category</th><th><i class="bi bi-gear"></i> Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for provider in rejected_providers %}
+            <tr>
+                <td>{{ provider.ServiceProviderID }}</td>
+                <td>{{ provider.Name }}</td>
+                <td>{{ provider.Email }}</td>
+                <td>{{ provider.PhoneNo }}</td>
+                <td>{{ provider.CNIC }}</td>
+                <td>{{ provider.Address }}</td>
+                <td>{{ provider.ServiceCategory }}</td>
+                <td>
+                    <a href="{{ url_for('update_provider_status', provider_id=provider.ServiceProviderID, action='approve') }}"
+                       class="btn btn-success btn-sm"
+                       onclick="return confirm('Are you sure you want to approve this provider again?');">
+                       Approve
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No rejected providers.</p>
+    {% endif %}
+</div>
+{% endblock %}

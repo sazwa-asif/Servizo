@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  /*  Login */
+  .login-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Left Side */
+  .left-panel {
+    flex: 0.7;
+    background: linear-gradient(135deg, #0A4C68 0%, #0D5A7D 50%, #0A4C68 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+    margin-left: 7rem;
+    margin-right: 0.5rem;
+    height: 90vh;
+    align-self: center;
+  }
+
+  .left-panel .overlay-text {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 4rem 2rem 2rem 2rem;
+  }
+
+  .left-panel .logo {
+    width: 250px;
+    height: auto;
+    margin-bottom: 2rem;
+    filter: brightness(0) invert(1);  /color the logo white/
+  }
+
+  .left-panel h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .left-panel p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Right Side login Form */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 2rem;
+  }
+
+ 
+  .login-card {
+    width: 100%;
+    max-width: 550px;
+    padding: 3rem;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+  }
+
+  .login-card h2 {
+    color: #0A4C68;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 1rem;
+    position: relative;
+  }
+
+  .login-card h2 .login-icon {
+    font-size: 2rem;
+    color: #0A4C68;
+    background: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(10, 76, 104, 0.3);
+  }
+
+  .login-card h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border-radius: 2px;
+  }
+
+ 
+  .form-label {
+    color: #0A4C68;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .input-group .form-label {
+    width: 80px;
+    margin-bottom: 0;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  .input-group .position-relative {
+    flex: 1;
+  }
+
+  .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 14px 45px 14px 35px; 
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .form-control:focus {
+    border-color: #0A4C68;
+    box-shadow: 0 0 0 0.2rem rgba(10, 76, 104, 0.15);
+    background: white;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 1rem;
+    z-index: 3;
+    width: 20px;
+    text-align: center;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    font-size: 1rem;
+    z-index: 3;
+    width: 20px;
+    text-align: center;
+    padding: 0;
+  }
+
+  .password-toggle:hover {
+    color: #0A4C68;
+  }
+
+  /* Role Buttons */
+  .role-btn {
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 30%;
+    transition: all 0.3s ease;
+    color: white;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .role-btn:hover {
+    background: white;
+    color: #0A4C68;
+  }
+
+  .role-customer {
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+  }
+
+  .role-customer:hover {
+    background: white;
+    color: #0A4C68;
+    border-color: #0A4C68;
+  }
+
+  .role-provider {
+    background: linear-gradient(45deg, #0D5A7D, #0A4C68);
+  }
+
+  .role-provider:hover {
+    background: white;
+    color: #0A4C68;
+    border-color: #0A4C68;
+  }
+
+  .role-admin {
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+  }
+
+  .role-admin:hover {
+    background: white;
+    color: #0A4C68;
+    border-color: #0A4C68;
+  }
+
+  .role-btn.active {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Submit Button */
+  .btn-warning {
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(10, 76, 104, 0.3);
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  .btn-warning:hover {
+    background: linear-gradient(45deg, #0D5A7D, #0A4C68);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10, 76, 104, 0.4);
+    color: white;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column;
+    }
+
+    .left-panel {
+      flex: none;
+      height: 300px;
+      margin-left: 1rem;
+      margin-right: 1rem;
+    }
+
+    .left-panel h1 {
+      font-size: 2rem;
+    }
+
+    .left-panel p {
+      font-size: 1rem;
+    }
+
+    .right-panel {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .login-card {
+      padding: 2rem;
+      margin: 1rem;
+    }
+
+    .role-btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<div class="login-container">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <div class="overlay-text">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Servizo Logo" class="logo">
+      <h1>Welcome to Servizo</h1>
+      <p>Your trusted platform for connecting customers with skilled service providers. Get the help you need, when you need it.</p>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div class="login-card">
+      <h2>
+        <span class="login-icon">
+          <i class="fas fa-user"></i>
+        </span>
+        Login
+      </h2>
+
+      <!-- FORM START -->
+      <form method="POST">
+
+        <!-- Email-->
+        <div class="input-group">
+          <label class="form-label">Email</label>
+          <div class="position-relative">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" name="email" placeholder="Enter your email" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Password-->
+        <div class="input-group">
+          <label class="form-label">Password</label>
+          <div class="position-relative">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" name="password" id="password" placeholder="Enter your password" class="form-control" required>
+            <button type="button" class="password-toggle" onclick="togglePassword()">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hidden role input -->
+        <input type="hidden" name="role" id="roleInput" value="general">
+
+        <!-- Role buttons -->
+        <div class="mt-4 text-center">
+          <label class="form-label d-block mb-3">Select Role</label>
+          <div class="d-flex justify-content-between flex-wrap gap-2">
+            <button type="button" class="role-btn role-customer" data-role="customer">Customer</button>
+            <button type="button" class="role-btn role-provider" data-role="provider">Provider</button>
+            <button type="button" class="role-btn role-admin" data-role="admin">Admin</button>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-warning w-100 mt-4">Login</button>
+      </form>
+      <!-- FORM END -->
+
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePassword() {
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    eyeIcon.classList.remove('fa-eye');
+    eyeIcon.classList.add('fa-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.classList.remove('fa-eye-slash');
+    eyeIcon.classList.add('fa-eye');
+  }
+}
+
+// Role selection functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const roleButtons = document.querySelectorAll('.role-btn');
+  const roleInput = document.getElementById('roleInput');
+
+  roleButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Remove active class from all buttons
+      roleButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked button
+      this.classList.add('active');
+      // Set the role value
+      roleInput.value = this.getAttribute('data-role');
+    });
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,360 @@
+﻿{% extends "base.html" %}
+{% block content %}
+
+<style>
+:root {
+  --primary-bg: #0A4C68;
+  --secondary-bg: #0d5a7d;
+  --accent: #4A90E2;
+  --light-bg: #f8f9fa;
+  --text-light: #ffffff;
+  --text-dark: #2c3e50;
+  --text-muted: #7f8c8d;
+  --border: #ecf0f1;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.jobs-page {
+  background: white;
+  min-height: 100vh;
+  color: var(--text-dark);
+}
+
+.header-section h1 {
+  color: var(--primary-bg);
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+}
+
+.header-section p {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.modern-card {
+  background-color: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.modern-card:hover {
+  box-shadow: 0 20px 50px rgba(10, 76, 104, 0.15) !important;
+}
+
+.modern-table {
+  color: var(--text-dark);
+  table-layout: fixed;
+  width: 100%;
+}
+
+
+.modern-table th,
+.modern-table td {
+  width: 11.11%; 
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word; 
+  white-space: normal; 
+  padding: 16px 10px;
+}
+
+/* Header */
+.table-header-row th {
+  background-color: var(--primary-bg);
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.table-data-row {
+  background-color: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.table-data-row:hover {
+  background-color: rgba(10, 76, 104, 0.08);
+  border-left: 4px solid var(--primary-bg);
+}
+
+.table-data-row td {
+  border-bottom: 1px solid rgba(10, 76, 104, 0.1);
+  color: var(--text-dark);
+}
+
+/* Badges and buttons */
+.customer-badge,
+.date-badge,
+.location-badge,
+.issue-text {
+  display: inline-block;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-bg);
+  background-color: rgba(10, 76, 104, 0.18);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  overflow: visible;
+  position: relative;
+}
+
+.btn-outline-primary {
+  border-color: var(--primary-bg);
+  color: var(--primary-bg);
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  min-width: 90px;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-bg);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(10, 76, 104, 0.3);
+}
+
+.btn-info {
+  background-color: var(--primary-bg);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 90px;
+}
+
+.btn-info:hover {
+  background-color: var(--secondary-bg);
+  box-shadow: 0 4px 12px rgba(10, 76, 104, 0.3);
+}
+
+
+.status-dropdown-menu {
+  background-color: white !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2) !important;
+  padding: 8px 0 !important;
+  margin-top: 4px !important;
+  min-width: 120px !important;
+  position: absolute !important;
+  z-index: 1050 !important;
+  overflow: visible !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.status-dropdown-menu .dropdown-item {
+  color: var(--text-dark) !important;
+  padding: 8px 12px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-radius: 8px !important;
+  margin: 1px 2px !important;
+}
+
+.status-dropdown-menu .dropdown-item:hover {
+  background-color: rgba(10, 76, 104, 0.1) !important;
+  color: var(--primary-bg) !important;
+  transform: translateX(4px) !important;
+}
+
+.status-dropdown-menu .dropdown-item i {
+  font-size: 1rem !important;
+  width: 16px !important;
+  text-align: center !important;
+}
+
+.status-dropdown-menu .dropdown-divider {
+  margin: 8px 0 !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+
+@media (max-width: 768px) {
+  .header-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .table-header-row th {
+    font-size: 0.75rem;
+    padding: 10px 6px;
+  }
+
+  .table-data-row td {
+    font-size: 0.85rem;
+    padding: 10px 6px;
+  }
+
+  .action-cell {
+    flex-direction: column;
+  }
+
+  .btn-outline-primary,
+  .btn-info {
+    width: 100%;
+  }
+
+  .status-dropdown-menu {
+    min-width: 180px;
+  }
+}
+</style>
+
+<div class="jobs-page py-5">
+  <div class="container-fluid px-4">
+    <div class="header-section mb-5">
+      <div>
+        <h1 class="fw-bold mb-2"><i class="bi bi-briefcase-fill me-2"></i>My Jobs</h1>
+        <p class="fs-6">Manage your jobs, update progress, and track payments</p>
+      </div>
+    </div>
+
+    {% if jobs %}
+    <div class="card border-0 shadow-xl modern-card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-borderless modern-table mb-0">
+            <thead>
+              <tr class="table-header-row">
+                <th><i class="bi bi-person-circle me-2"></i>Customer</th>
+                <th><i class="bi bi-calendar3 me-2"></i>Date</th>
+                <th><i class="bi bi-clock me-2"></i>Time</th>
+                <th><i class="bi bi-chat-left-text me-2"></i>Issue</th>
+                <th><i class="bi bi-geo-alt me-2"></i>Location</th>
+                <th><i class="bi bi-lightning me-2"></i>Action</th>
+                <th><i class="bi bi-hourglass-split me-2"></i>Status</th>
+                <th><i class="bi bi-wallet2 me-2"></i>Customer Payment</th>
+                <th><i class="bi bi-credit-card me-2"></i>Provider Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for job in jobs %}
+              <tr class="table-data-row">
+                <td><span class="customer-badge">{{ job.CustomerName }}</span></td>
+                <td><span class="date-badge">{{ job.BookingDate }}</span></td>
+                <td><span class="date-badge">{{ job.BookingTime or '-' }}</span></td>
+                <td><small class="issue-text" title="{{ job.IssueDescription }}">{{ job.IssueDescription or '-' }}</small></td>
+                <td><span class="location-badge" title="{{ job.Location }}">{{ job.Location or '-' }}</span></td>
+                <td>
+                  <div class="action-cell">
+                    <div class="btn-group me-2" role="group">
+                      <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="bi bi-pencil-square me-1"></i>Update
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-light status-dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('update_job_status', booking_id=job.BookingID, action='complete') }}"><i class="bi bi-check-circle"></i><span>Completed</span></a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('update_job_status', booking_id=job.BookingID, action='cancelled') }}" onclick="return confirm('Cancel this job? This will trigger a refund to customer.');"><i class="bi bi-x-circle"></i><span>Cancel Job</span></a></li>
+                      </ul>
+                    </div>
+                    <a href="{{ url_for('offer_chat', offer_id=job.OfferID) }}" class="btn btn-sm btn-info">
+                      <i class="bi bi-chat-dots me-1"></i>Chat
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  {% if job.BookingStatus == 'Scheduled' %}
+                    <span class="badge bg-primary"><i class="bi bi-play-circle me-1"></i>Scheduled</span>
+                  {% elif job.BookingStatus == 'In Progress' %}
+                    <span class="badge bg-info"><i class="bi bi-arrow-right me-1"></i>In Progress</span>
+                  {% elif job.BookingStatus == 'Completed' %}
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Completed</span>
+                  {% elif job.BookingStatus == 'Incomplete' %}
+                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Incomplete</span>
+                  {% elif job.BookingStatus == 'Cancelled' %}
+                    <span class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i>Cancelled</span>
+                  {% else %}
+                    <span class="badge bg-secondary">{{ job.BookingStatus }}</span>
+                  {% endif %}
+
+                  {% if job.RefundStatus == 'Pending' %}
+                    <br><small class="text-warning"><i class="bi bi-hourglass me-1"></i>Refund Pending</small>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if job.PaymentStatus == 'Completed' %}
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Paid</span>
+                  {% elif job.PaymentStatus == 'Refunded' %}
+                    <span class="badge bg-secondary"><i class="bi bi-arrow-left me-1"></i>Refunded</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass me-1"></i>Pending </span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if job.ProviderPaymentStatus == 'Paid' %}
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Paid</span>
+                  {% elif job.BookingStatus == 'Completed' and job.PaymentStatus == 'Completed' %}
+                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass me-1"></i>Pending Payout</span>
+                  {% elif job.BookingStatus in ['Scheduled', 'In Progress'] %}
+                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass me-1"></i>Pending</span>
+                  {% elif job.BookingStatus in ['Incomplete', 'Cancelled'] %}
+                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>No Payment</span>
+                  {% else %}
+                    <span class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i>Not Available</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="card border-0 shadow-sm modern-card">
+      <div class="card-body text-center py-5">
+        <div class="empty-state">
+          <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+          <h5 class="text-muted fw-light">No jobs found</h5>
+          <p class="text-muted small">Your active jobs will appear here</p>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

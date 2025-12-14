@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4 p-4" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-left: 6px solid #0a4c68;">
+    <div class="d-flex align-items-center">
+      <img src="{{ url_for('static', filename='images/' + (provider.ServiceCategory|lower).replace(' ', '_') + '_logo.jpg') }}"
+           alt="{{ provider.ServiceCategory }} logo"
+           class="rounded-circle border border-3 me-3"
+           style="border-color: #0a4c68 !important; box-shadow: 0 4px 8px rgba(10, 76, 104, 0.3);"
+           width="80" height="80">
+      <div>
+        <h3 class="fw-bold mb-1" style="color: #0a4c68;">{{ provider.Name }}</h3>
+        <p class="mb-1" style="color: #0a4c68;"><i class="bi bi-briefcase"></i> {{ provider.ServiceCategory }}</p>
+        <p class="mb-1" style="color: #0a4c68;"><i class="bi bi-geo-alt"></i> {{ provider.Address }}</p>
+        <p class="mb-1" style="color: #0a4c68;"><i class="bi bi-envelope"></i> {{ provider.Email }}</p>
+        <p class="mb-1" style="color: #0a4c68;"><i class="bi bi-telephone"></i> {{ provider.PhoneNo }}</p>
+      </div>
+    </div>
+
+    <hr style="border-color: #0a4c68; border-width: 2px;">
+
+    <div class="d-flex align-items-center mb-2">
+      <h6 class="me-2 mb-0" style="color: #0a4c68;">⭐ Rating:</h6>
+      {% if provider.AvgRating %}
+        <span class="fw-bold" style="color: #0a4c68;">{{ provider.AvgRating }}/5</span>
+        <span class="ms-2" style="color: #6c757d;">({{ provider.CompletedJobs }} completed jobs)</span>
+      {% else %}
+        <span style="color: #6c757d;">No ratings yet</span>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if feedbacks %}
+  <div class="card shadow-lg border-0 rounded-4 p-4 mt-4" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-left: 6px solid #0a4c68;">
+    <h5 class="fw-bold mb-3" style="color: #0a4c68;">Customer Feedback</h5>
+    {% for fb in feedbacks %}
+      <div class="border rounded-3 p-3 mb-3" style="border-color: #0a4c68 !important; background: rgba(10, 76, 104, 0.05);">
+        <p class="mb-1"><strong style="color: #0a4c68;">{{ fb.CustomerName }}</strong> — ⭐ <span style="color: #0a4c68;">{{ fb.Rating }}/5</span></p>
+        <p class="small mb-0" style="color: #6c757d;">{{ fb.Text }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert mt-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color: #0a4c68; border: 2px solid #0a4c68; border-radius: 8px;">This provider has not received any feedback yet.</div>
+  {% endif %}
+
+  <div class="text-center mt-4">
+    <a href="{{ url_for('view_providers') }}" class="btn px-4 fw-bold" style="background: linear-gradient(135deg, #0a4c68 0%, #0d5a7a 100%); color: white; border: none; box-shadow: 0 4px 15px rgba(10, 76, 104, 0.3);">← Back to Services</a>
+  </div>
+</div>
+{% endblock %}

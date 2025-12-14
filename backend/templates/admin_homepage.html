@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="fw-bold mb-4" style="color: #0A4C68;">Admin Dashboard</h2>
+  <p class="text-muted">Welcome, Admin! Manage everything from one place.</p>
+
+  <div class="row g-4">
+
+    <!-- Validate Providers -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card shadow-sm h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-person-check display-4 text-warning"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Validate Providers</h5>
+          <p>Approve or reject service provider registrations.</p>
+          <a href="{{ url_for('manage_providers') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manage Services -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card shadow-sm h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-tools display-4 text-warning"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Manage Services</h5>
+          <p>Add, update, or remove services offered on Servizo.</p>
+          <a href="{{ url_for('manage_services') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">Manage</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commission Reports -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card shadow-sm h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-graph-up display-4 text-warning"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Commission Reports</h5>
+          <p>View platform earnings and commission distribution.</p>
+          <a href="{{ url_for('commission_reports') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">View Reports</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manage Payments -->
+    <div class="col-md-6 col-lg-6">
+      <div class="card shadow-sm h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-cash-stack display-4 text-warning"></i>
+          <h5 class="mt-3 fw-bold" style="color: #0A4C68;">Manage Payments</h5>
+          <p>Release or refund payments for bookings.</p>
+          <a href="{{ url_for('manage_payments') }}" class="btn" style="background-color: #0A4C68; color: white; border: none;">Manage</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

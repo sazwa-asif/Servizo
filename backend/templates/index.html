@@ -1,0 +1,1214 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  
+  .hero {
+    background: linear-gradient(135deg, #0A4C68 0%, #0D5A7D 50%, #0A4C68 100%);
+    color: white;
+    padding: 120px 0 60px; 
+    position: relative;
+    overflow: hidden;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(120, 204, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(120, 255, 214, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    z-index: 1;
+  }
+  
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+    z-index: 1;
+  }
+  
+  .hero .container {
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1s ease-out;
+  }
+  
+  .hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0);
+    background: linear-gradient(to right, #ffffff, #e6f7ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+  }
+  
+  .hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .hero .btn {
+    padding: 14px 32px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.4s ease;
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .btn-customer {
+    background: linear-gradient(45deg, #ffffff, #f0f9ff);
+    color: #0A4C68;
+    border: 2px solid transparent;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  }
+  
+  .btn-customer:hover {
+    background: transparent;
+    color: white;
+    border-color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+  }
+  
+  .btn-provider {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+  }
+  
+  .btn-provider:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+  }
+  
+  /* Hero Image Section */
+  .hero-img {
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+    text-align: center;
+  }
+  
+  .hero-img img {
+    filter: drop-shadow(0 25px 40px rgba(0,0,0,0.4));
+    transition: all 0.5s ease;
+    max-width: 100%;
+    height: auto;
+    transform: scale(1.15);
+    margin-top: 20px;
+  }
+  
+  .hero-img img:hover {
+    transform: scale(1.2) rotate(2deg);
+    filter: drop-shadow(0 30px 50px rgba(0,0,0,0.5));
+  }
+  
+  /* Floating elements in hero */
+  .floating-elements {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .floating-element {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: floatRandom 15s infinite linear;
+  }
+  
+  .floating-element:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+  
+  .floating-element:nth-child(2) {
+    width: 40px;
+    height: 40px;
+    top: 70%;
+    left: 80%;
+    animation-delay: -5s;
+  }
+  
+  .floating-element:nth-child(3) {
+    width: 60px;
+    height: 60px;
+    top: 40%;
+    left: 85%;
+    animation-delay: -10s;
+  }
+  
+ 
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes floatRandom {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(20px, 30px) rotate(90deg);
+    }
+    50% {
+      transform: translate(0, 60px) rotate(180deg);
+    }
+    75% {
+      transform: translate(-20px, 30px) rotate(270deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg);
+    }
+  }
+
+  /*  Stats Section */
+  .stats-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 40px 0 80px;
+    position: relative;
+    margin-top: -40px; 
+    z-index: 3;
+  }
+
+  .stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(10, 76, 104, 0.2), transparent);
+  }
+
+  .stats-container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat-box {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 
+      0 8px 32px rgba(10, 76, 104, 0.08),
+      0 2px 8px rgba(10, 76, 104, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(10, 76, 104, 0.03), rgba(13, 90, 125, 0.05));
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+  }
+
+  .stat-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+      0 20px 40px rgba(10, 76, 104, 0.15),
+      0 8px 20px rgba(10, 76, 104, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .stat-box:hover::before {
+    opacity: 1;
+  }
+
+  .stat-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0A4C68, #0D5A7D);
+    color: white;
+    border-radius: 18px;
+    font-size: 1.8rem;
+    box-shadow: 0 8px 20px rgba(10, 76, 104, 0.2);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-box:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 25px rgba(10, 76, 104, 0.3);
+  }
+
+  .stat-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .stat-box:hover .stat-icon::before {
+    transform: translateX(100%);
+  }
+
+  .stat-number {
+    font-size: 3.2rem;
+    font-weight: 800;
+    color: #0A4C68;
+    margin-bottom: 0.5rem;
+    display: block;
+    position: relative;
+    background: linear-gradient(135deg, #0A4C68, #0D5A7D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .plus-sign {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #0A4C68, #0D5A7D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-left: 2px;
+    opacity: 0.9;
+  }
+
+  .stat-label {
+    font-size: 1.1rem;
+    color: #5a6c7d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.5rem;
+  }
+
+  .stats-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1;
+    opacity: 0.03;
+  }
+
+  .stats-background::before {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border-radius: 50%;
+    top: 10%;
+    left: 10%;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .stats-background::after {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(45deg, #0D5A7D, #0A4C68);
+    border-radius: 50%;
+    bottom: 20%;
+    right: 15%;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+  
+  .services {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 100px 0;
+    position: relative;
+  }
+  
+  .services::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+  }
+  
+  .services h2 {
+    color: #0A4C68;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+    font-size: 2.5rem;
+  }
+  
+  .services h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    border-radius: 3px;
+  }
+  
+  .service-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  
+  .service-card.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  
+  .service-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .service-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  
+  .service-card .card-body {
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .service-icon {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0A4C68, #0D5A7D);
+    color: white;
+    border-radius: 50%;
+    font-size: 2.5rem;
+    box-shadow: 0 10px 20px rgba(10,76,104,0.3);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .service-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-100%) rotate(45deg);
+    transition: transform 0.6s ease;
+  }
+  
+  .service-card:hover .service-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 30px rgba(10,76,104,0.4);
+  }
+  
+  .service-card:hover .service-icon::before {
+    transform: translateX(100%) rotate(45deg);
+  }
+  
+  .service-card h5 {
+    color: #0A4C68;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+  
+  .service-card p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .more-text {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    color: #495057;
+    line-height: 1.6;
+  }
+  
+  .more-text.show {
+    max-height: 300px;
+  }
+  
+  .read-more-btn {
+    background: linear-gradient(45deg, #0A4C68, #0D5A7D);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .read-more-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #0D5A7D, #0A4C68);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+  }
+  
+  .read-more-btn:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  .read-more-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(10,76,104,0.3);
+  }
+  
+  /* Why Choose Us Section */
+  .choose-us {
+    background: linear-gradient(135deg, #0A4C68 0%, #0D5A7D 100%);
+    color: white;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .choose-us::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(120, 204, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(120, 255, 214, 0.1) 0%, transparent 50%);
+  }
+  
+  .choose-us h2 {
+    font-weight: 800;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+    font-size: 2.5rem;
+  }
+  
+  .choose-us h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background: white;
+    border-radius: 3px;
+  }
+  
+  .choose-us .feature-box {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  
+  .choose-us .feature-box.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .choose-us .feature-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+    z-index: 0;
+  }
+  
+  .choose-us .feature-box:hover::before {
+    transform: translateY(0);
+  }
+  
+  .choose-us .feature-box:hover {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+  
+  .choose-us h5 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    font-size: 1.3rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .choose-us p {
+    opacity: 0.9;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Enhanced Footer */
+  .footer {
+    background: linear-gradient(135deg, #0A4C68 0%, #0D5A7D 100%);
+    color: white;
+    padding: 80px 0 30px;
+    position: relative;
+  }
+  
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(45deg, #ffffff, rgba(255,255,255,0.5));
+  }
+  
+  .footer h5 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .footer h5::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 2px;
+  }
+  
+  .footer-link {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-link:hover {
+    color: white;
+    transform: translateX(8px);
+  }
+  
+  .footer-icon {
+    color: rgba(255,255,255,0.8);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+  
+  .footer-icon:hover {
+    color: white;
+    transform: translateY(-5px) scale(1.2);
+  }
+  
+  .footer hr {
+    border-color: rgba(255,255,255,0.2);
+    margin: 2rem 0;
+  }
+  
+  .footer p:last-child {
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+  }
+  
+
+  @media (max-width: 1200px) {
+    .hero-img img {
+      transform: scale(1.1);
+      margin-top: 10px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .hero h1 {
+      font-size: 2.8rem;
+    }
+    
+    .hero p {
+      font-size: 1.1rem;
+    }
+    
+    .hero-buttons {
+      justify-content: center;
+    }
+    
+    .hero-img {
+      margin-top: 3rem;
+    }
+    
+    .hero-img img {
+      transform: scale(1);
+      margin-top: 0;
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+    }
+
+    .plus-sign {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .hero {
+      padding: 100px 0 40px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 2.3rem;
+    }
+    
+    .hero p {
+      font-size: 1rem;
+    }
+    
+    .hero .btn {
+      padding: 12px 25px;
+      width: 100%;
+      max-width: 250px;
+    }
+    
+    .services, .choose-us, .stats-section {
+      padding: 70px 0;
+    }
+    
+    .service-card .card-body {
+      padding: 2rem 1.5rem;
+    }
+    
+    .choose-us .feature-box {
+      padding: 2rem 1.5rem;
+    }
+    
+    .stat-number {
+      font-size: 2.4rem;
+    }
+    
+    .plus-sign {
+      font-size: 1.8rem;
+    }
+    
+    .hero-img img {
+      transform: scale(0.9);
+    }
+
+    .stat-box {
+      padding: 2rem 1rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+    
+    .services h2, .choose-us h2 {
+      font-size: 2rem;
+    }
+    
+    .service-icon {
+      width: 70px;
+      height: 70px;
+      font-size: 2rem;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+    
+    .plus-sign {
+      font-size: 1.5rem;
+    }
+    
+    .hero-img img {
+      transform: scale(0.8);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<section class="hero">
+  <div class="floating-elements">
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+  </div>
+  
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h1>Your Trusted Partner for All Home Services</h1>
+        <p>Connect with verified professionals for plumbing, electrical, carpentry, appliance repair, and more. Quality service guaranteed.</p>
+        <div class="hero-buttons">
+          <a href="{{ url_for('register_customer') }}" class="btn btn-customer">Join as Customer</a>
+          <a href="{{ url_for('register_provider') }}" class="btn btn-provider">Join as Provider</a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-img">
+          <img src="{{ url_for('static', filename='images/provider.png') }}"
+               alt="Service Professionals"
+               class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Modern Stats Section -->
+<section class="stats-section">
+  <div class="stats-background"></div>
+  <div class="container stats-container">
+    <div class="row text-center">
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-box">
+          <div class="stat-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <span class="stat-number" data-count="5000">0<span class="plus-sign">+</span></span>
+          <span class="stat-label">Happy Customers</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-box">
+          <div class="stat-icon">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <span class="stat-number" data-count="250">0<span class="plus-sign">+</span></span>
+          <span class="stat-label">Verified Providers</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-box">
+          <div class="stat-icon">
+            <i class="bi bi-grid-3x3"></i>
+          </div>
+          <span class="stat-number" data-count="15">0<span class="plus-sign">+</span></span>
+          <span class="stat-label">Service Categories</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-4">
+        <div class="stat-box">
+          <div class="stat-icon">
+            <i class="bi bi-star"></i>
+          </div>
+          <span class="stat-number" data-count="98">0<span class="plus-sign">%</span></span>
+          <span class="stat-label">Satisfaction Rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="services">
+  <div class="container">
+    <h2>Our Premium Services</h2>
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card">
+          <div class="card-body">
+            <div class="service-icon">
+              <i class="bi bi-droplet"></i>
+            </div>
+            <h5>Plumbing Solutions</h5>
+            <p>Expert fixes for leaks, installations, and all plumbing emergencies.</p>
+
+            <div class="more-text">
+              Our certified plumbers handle everything from simple drips to complex pipe installations. We fix broken pipes, water tank issues, drainage blockages, and provide complete bathroom and kitchen plumbing solutions with a 90-day service guarantee.
+            </div>
+
+            <button class="read-more-btn">Read More</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card">
+          <div class="card-body">
+            <div class="service-icon">
+              <i class="bi bi-lightning"></i>
+            </div>
+            <h5>Electrical Services</h5>
+            <p>Safe and reliable electrical repairs, installations & maintenance.</p>
+
+            <div class="more-text">
+              Our licensed electricians handle wiring issues, circuit breaker problems, switch replacements, fan repairs, and complete home electrical safety inspections. We ensure all work meets national electrical code standards for your safety.
+            </div>
+
+            <button class="read-more-btn">Read More</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card">
+          <div class="card-body">
+            <div class="service-icon">
+              <i class="bi bi-tools"></i>
+            </div>
+            <h5>Carpentry & Woodwork</h5>
+            <p>Custom furniture, repairs, and precision woodworking solutions.</p>
+
+            <div class="more-text">
+              From repairing broken furniture to creating custom built-ins, our skilled carpenters deliver quality craftsmanship. We handle door and drawer repairs, wood polishing, custom shelving, and all types of interior woodwork with attention to detail.
+            </div>
+
+            <button class="read-more-btn">Read More</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="card service-card">
+          <div class="card-body">
+            <div class="service-icon">
+              <i class="bi bi-gear"></i>
+            </div>
+            <h5>Appliance Repair</h5>
+            <p>Professional repair for AC, fridge, washing machine & all appliances.</p>
+
+            <div class="more-text">
+              Our technicians specialize in diagnosing and fixing all major home appliances. We repair AC cooling issues, refrigerator gas leaks, washing machine motors, PCB faults, and provide genuine spare parts with a 60-day warranty on all repairs.
+            </div>
+
+            <button class="read-more-btn">Read More</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="choose-us">
+  <div class="container">
+    <h2>Why Choose Servizo?</h2>
+    <div class="row mt-5">
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-shield-check"></i> Verified Providers</h5>
+          <p>Every service provider undergoes rigorous background checks and verification by our admin team.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-cash-coin"></i> Transparent Pricing</h5>
+          <p>Get upfront cost estimates with no hidden charges. Pay only after satisfactory service completion.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-lock"></i> Secure Payments</h5>
+          <p>Your payments are protected through our secure escrow system until the job is completed to your satisfaction.</p>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-clock"></i> Quick Response</h5>
+          <p>Connect with available providers in your area within minutes, not days.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-star"></i> Quality Guarantee</h5>
+          <p>All services come with a satisfaction guarantee. We'll make it right if you're not happy.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box">
+          <h5><i class="bi bi-headset"></i> 24/7 Support</h5>
+          <p>Our customer support team is available round the clock to assist with any issues.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-4 mb-4">
+        <h5>Servizo</h5>
+        <p>Skilled Hands, Smart Service - connecting you with trusted professionals for all your home and office maintenance needs. Quality, reliability, and customer satisfaction are our top priorities.</p>
+      </div>
+
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url_for('index') }}" class="footer-link">Home</a></li>
+          <li><a href="{{ url_for('login') }}" class="footer-link">Login</a></li>
+          <li><a href="{{ url_for('register_customer') }}" class="footer-link">Register as Customer</a></li>
+          <li><a href="{{ url_for('register_provider') }}" class="footer-link">Register as Provider</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h5>Services</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Plumbing</a></li>
+          <li><a href="#" class="footer-link">Electrical</a></li>
+          <li><a href="#" class="footer-link">Carpentry</a></li>
+          <li><a href="#" class="footer-link">Appliance Repair</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-6 mb-4">
+        <h5>Contact Us</h5>
+        <p><i class="bi bi-geo-alt-fill me-2"></i> Karachi, Pakistan</p>
+        <p><i class="bi bi-telephone-fill me-2"></i> +92 300 1234567</p>
+        <p><i class="bi bi-envelope-fill me-2"></i> support@servizo.com</p>
+
+        <div class="mt-3">
+          <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="footer-icon"><i class="bi bi-twitter"></i></a>
+          <a href="#" class="footer-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="footer-icon"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <p class="text-center">&copy; 2025 Servizo. All Rights Reserved. | <a href="#" class="footer-link">Privacy Policy</a> | <a href="#" class="footer-link">Terms of Service</a></p>
+  </div>
+</footer>
+
+<script>
+  // Read More functionality
+  document.querySelectorAll('.read-more-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.service-card');
+      const moreText = card.querySelector('.more-text');
+
+      moreText.classList.toggle('show');
+
+      btn.textContent = moreText.classList.contains('show')
+        ? 'Read Less'
+        : 'Read More';
+    });
+  });
+  
+  // Animation on scroll
+  function animateOnScroll() {
+    const serviceCards = document.querySelectorAll('.service-card');
+    const featureBoxes = document.querySelectorAll('.feature-box');
+    const statBoxes = document.querySelectorAll('.stat-box');
+    
+    serviceCards.forEach(card => {
+      const cardTop = card.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      if (cardTop < windowHeight - 100) {
+        card.classList.add('animate');
+      }
+    });
+    
+    featureBoxes.forEach(box => {
+      const boxTop = box.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      if (boxTop < windowHeight - 100) {
+        box.classList.add('animate');
+      }
+    });
+
+    statBoxes.forEach(box => {
+      const boxTop = box.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      if (boxTop < windowHeight - 100) {
+        box.classList.add('animate');
+      }
+    });
+  }
+  
+  // Stats counter animation
+  function animateStats() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    let animated = false;
+    
+    return function() {
+      const statsSection = document.querySelector('.stats-section');
+      const sectionTop = statsSection.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      if (sectionTop < windowHeight - 100 && !animated) {
+        animated = true;
+        
+        statNumbers.forEach(stat => {
+          const target = parseInt(stat.getAttribute('data-count'));
+          let current = 0;
+          const increment = target / 50;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              clearInterval(timer);
+              current = target;
+            }
+            
+            stat.childNodes[0].textContent = Math.floor(current);
+          }, 30);
+        });
+      }
+    };
+  }
+  
+  // Initialize animations
+  window.addEventListener('load', () => {
+    animateOnScroll();
+    const statsAnimator = animateStats();
+    window.addEventListener('scroll', () => {
+      animateOnScroll();
+      statsAnimator();
+    });
+  });
+</script>
+
+{% endblock %}

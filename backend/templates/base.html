@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Servizo</title>
+
+ 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
+  
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      overflow-x: hidden;
+    }
+
+    /* Nav Sidebar*/
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 240px;
+      background: linear-gradient(180deg, #0d5a7d 0%, #094861 100%);
+      padding: 20px 0;
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Guest sidebar hidden*/
+    .sidebar.guest-sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar.guest-sidebar.show {
+      transform: translateX(0);
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    /* Logo Section */
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px 30px;
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-brand img {
+      width: 55px;
+      height: 55px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 3px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-brand-text {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Nav Bar */
+    .sidebar-nav {
+      list-style: none;
+      padding: 0 15px;
+    }
+
+    .nav-item {
+      margin-bottom: 5px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 13px 18px;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateX(3px);
+    }
+
+    .nav-link.active {
+      background: white;
+      color: #0d5a7d;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link i {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Logout Button */
+    .nav-link.logout {
+      color: #ff6b6b;
+      margin-top: 30px;
+    }
+
+    .nav-link.logout:hover {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff5252;
+    }
+
+    /* Service Badge for providers */
+    .service-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .service-badge img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 240px;
+      min-height: 100vh;
+      padding: 0;
+      background: #f0f4f8;
+    }
+    
+    /* Guest content */
+    .main-content.guest-content {
+      margin-left: 0;
+      padding-top: 20px;
+    }
+
+    /* Top Header for logged-in users */
+    .top-header {
+      background: white;
+      padding: 15px 30px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f0f4f8;
+      padding: 8px 15px;
+      border-radius: 8px;
+      width: 350px;
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      flex: 1;
+      padding: 0 10px;
+      color: #333;
+    }
+
+    .search-bar i {
+      color: #999;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #0d5a7d;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Content Container */
+    .content-container {
+      padding: 30px;
+    }
+
+    /* Flash Messages */
+    .alert {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      background: #0d5a7d;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    
+    .mobile-toggle.logged-in {
+      display: none;
+    }
+    
+  
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    
+    .sidebar-overlay.show {
+      display: block;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .main-content.guest-content {
+        margin-left: 0;
+      }
+
+     
+      .mobile-toggle.logged-in {
+        display: block;
+      }
+
+      .search-bar {
+        width: 200px;
+      }
+
+      .top-header {
+        padding: 15px 70px 15px 70px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-bar {
+        display: none;
+      }
+
+      .top-header {
+        justify-content: flex-end;
+        padding: 15px 70px 15px 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- mobile toggle buttons -->
+  {% if session.get('role') %}
+    <!-- logged in user only toggle p aega mobile view -->
+    <button class="mobile-toggle logged-in" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+  {% else %}
+    <!-- guest users always visible with overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+  {% endif %}
+  
+
+  <!-- Nav Bar -->
+  {% if session.get('role') %}
+    <aside class="sidebar" id="sidebar">
+  {% else %}
+    <aside class="sidebar guest-sidebar" id="sidebar">
+  {% endif %}
+    
+    <!-- Servizo Logo and Text -->
+    <a href="{{ url_for('index') }}" class="sidebar-brand">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Servizo">
+      <span class="sidebar-brand-text">Servizo</span>
+    </a>
+
+    <!-- Nav Bar Role Based -->
+    <ul class="sidebar-nav">
+      {% if session.get("role") == "customer" %}
+        <!-- Customer Role -->
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('customer_home') }}">
+            <i class="bi bi-house-door"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('book_service') }}">
+            <i class="bi bi-calendar-check"></i>
+            <span>Book a Service</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('view_providers') }}">
+            <i class="bi bi-people"></i>
+            <span>View Service Providers</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('my_bookings') }}">
+            <i class="bi bi-list-check"></i>
+            <span>My Bookings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('customer_feedback') }}">
+            <i class="bi bi-chat-square-text"></i>
+            <span>Feedback</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout" href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+
+      {% elif session.get("role") == "provider" %}
+        <!-- Provider Role -->
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('provider_home') }}">
+            <i class="bi bi-house-door"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('provider_offers') }}">
+            <i class="bi bi-cash-stack"></i>
+            <span>Customer Offers</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('provider_jobs') }}">
+            <i class="bi bi-briefcase"></i>
+            <span>My Jobs</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('provider_payments') }}">
+            <i class="bi bi-cash-coin"></i>
+            <span>Payments</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('provider_profile') }}">
+            <i class="bi bi-person-circle"></i>
+            <span>My Profile</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout" href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+
+      {% elif session.get("role") == "admin" %}
+        <!-- Admin Role -->
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('admin_home') }}">
+            <i class="bi bi-house-door"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_providers') }}">
+            <i class="bi bi-people"></i>
+            <span>Manage Providers</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_services') }}">
+            <i class="bi bi-gear"></i>
+            <span>Manage Services</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('manage_payments') }}">
+            <i class="bi bi-cash-coin"></i>
+            <span>Manage Payments</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('commission_reports') }}">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            <span>Commission Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout" href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+
+      {% else %}
+        <!-- Guest role -->
+        <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('index') }}">
+            <i class="bi bi-house-door"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('index') }}#services">
+            <i class="bi bi-grid"></i>
+            <span>Services</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('login') }}">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Login</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('register_customer') }}">
+            <i class="bi bi-person-plus"></i>
+            <span>Register Customer</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('register_provider') }}">
+            <i class="bi bi-briefcase"></i>
+            <span>Register Provider</span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  {% if session.get('role') %}
+    <main class="main-content">
+  {% else %}
+    <main class="main-content guest-content">
+  {% endif %}
+    
+    <!-- Top icon image for logged in users -->
+    {% if session.get('role') %}
+    <header class="top-header">
+      <!-- Search Form -->
+      <form class="search-bar" action="{{ url_for('search') }}" method="GET">
+        <i class="bi bi-search"></i>
+        <input type="text" name="q" placeholder="Search here" value="{{ request.args.get('q', '') }}">
+      </form>
+      
+      <!-- User Profile Section -->
+      <div class="user-profile">
+        {% if session.get("role") == "customer" %}
+          <span style="color: #666; font-size: 14px;">Hello, {{ session.get('name', 'User') }}</span>
+          <img src="https://ui-avatars.com/api/?name={{ session.get('name', 'User') }}&background=0d5a7d&color=fff" alt="Customer">
+        {% elif session.get("role") == "provider" %}
+          <span style="color: #666; font-size: 14px;">Hello, {{ session.get('name', 'User') }}</span>
+          {% if session.get('service_logo') %}
+            <img src="{{ url_for('static', filename=session['service_logo']) }}" 
+                 alt="{{ session['service_category'] }}"
+                 title="{{ session['service_category'] }}">
+          {% else %}
+            <img src="https://ui-avatars.com/api/?name={{ session.get('name', 'User') }}&background=0d5a7d&color=fff" alt="Provider">
+          {% endif %}
+        {% elif session.get("role") == "admin" %}
+          <span style="color: #666; font-size: 14px;">Hello, {{ session.get('name', 'User') }}</span>
+          <img src="https://ui-avatars.com/api/?name={{ session.get('name', 'User') }}&background=dc3545&color=fff" alt="Admin">
+        {% endif %}
+      </div>
+    </header>
+    {% endif %}
+
+    <!-- Flash Messages Container -->
+    <div class="{% if session.get('role') %}content-container{% else %}container mt-3{% endif %}">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{
+               'success' if category=='success' else
+               ('warning' if category=='warning' else
+               ('danger' if category=='danger' else 'info')) }}
+               alert-dismissible fade show auto-dismiss" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Page Specific Content -->
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // dismiss flash messages after 2.7 seconds
+    document.addEventListener("DOMContentLoaded", function () {
+      const alerts = document.querySelectorAll(".auto-dismiss");
+      alerts.forEach(alert => {
+        setTimeout(() => {
+          alert.style.transition = "opacity 0.8s ease";
+          alert.style.opacity = "0";
+          setTimeout(() => {
+            let bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+          }, 500); 
+        }, 2200);
+      });
+    });
+
+    // Toggle sidebar visibility
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      if (sidebar) {
+        sidebar.classList.toggle('show');
+        
+        // Toggle overlay for guest users
+        if (overlay) {
+          overlay.classList.toggle('show');
+        }
+      }
+    }
+
+    // Close sidebar when clicking outside on mobile 
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.querySelector('.mobile-toggle');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      if (sidebar && toggle) {
+      
+        if (window.innerWidth <= 768 && !overlay) {
+          if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+            sidebar.classList.remove('show');
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

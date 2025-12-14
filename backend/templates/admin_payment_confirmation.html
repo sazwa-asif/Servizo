@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="{% if type=='provider' %}fas fa-money-bill-wave{% else %}fas fa-undo-alt{% endif %} me-2"></i>
+            {% if type=='provider' %}Confirm Provider Payout{% else %}Confirm Customer Refund{% endif %}
+          </h4>
+        </div>
+
+        <div class="card-body">
+          <!-- Payment/Refund Details Section -->
+          <div class="payment-details mb-4">
+            <h5><i class="fas fa-info-circle me-2"></i>Payment Details</h5>
+            <table class="table table-bordered">
+              <tr>
+                <th><i class="fas fa-hashtag me-1"></i>Booking ID:</th>
+                <td>#{{ booking_id }}</td>
+              </tr>
+
+              {% if type=='provider' %}
+              <!-- Provider payout details -->
+              <tr>
+                <th><i class="fas fa-user-tie me-1"></i>Provider:</th>
+                <td>{{ booking.ProviderName }}</td>
+              </tr>
+              <tr>
+                <th><i class="fas fa-dollar-sign me-1"></i>Total Amount:</th>
+                <td>PKR {{ "%.2f"|format(total) }}</td>
+              </tr>
+              <tr class="table-success">
+                <th><i class="fas fa-hand-holding-usd me-1"></i>Provider Gets (80%):</th>
+                <td><strong>PKR {{ "%.2f"|format(provider_amount) }}</strong></td>
+              </tr>
+              <tr class="table-primary">
+                <th><i class="fas fa-percentage me-1"></i>Admin Commission (20%):</th>
+                <td><strong>PKR {{ "%.2f"|format(commission) }}</strong></td>
+              </tr>
+
+              {% else %}
+              <!-- Customer refund details -->
+              <tr>
+                <th><i class="fas fa-user me-1"></i>Customer:</th>
+                <td>{{ booking.CustomerName }}</td>
+              </tr>
+              <tr>
+                <th><i class="fas fa-dollar-sign me-1"></i>Paid Amount:</th>
+                <td>PKR {{ "%.2f"|format(total) }}</td>
+              </tr>
+              {% endif %}
+            </table>
+          </div>
+
+          <!-- notice for users -->
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Important Notice:</strong>
+            {% if type=='provider' %}
+            This payment will be transferred directly to the provider's Stripe account.
+            {% else %}
+            This refund will be returned directly to the customer's payment method via Stripe.
+            {% endif %}
+          </div>
+
+          <!-- action button -->
+          <button id="transfer-btn" class="btn btn-primary btn-lg w-100 mb-3">
+            <i class="fas fa-paper-plane me-2"></i>
+            {% if type=='provider' %}
+            Transfer PKR {{ "%.2f"|format(provider_amount) }} to Provider
+            {% else %}
+            Refund PKR {{ "%.2f"|format(total) }} to Customer
+            {% endif %}
+          </button>
+
+          <!-- Back button to return to payments management -->
+          <a href="{{ url_for('manage_payments') }}" class="btn btn-secondary w-100">
+            <i class="fas fa-arrow-left me-2"></i> Back to Payments
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Handle the payment/refund button click
+document.getElementById('transfer-btn').addEventListener('click', async function() {
+  const btn = this;
+  const originalText = btn.innerHTML;
+
+  // Show loading state
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+  try {
+    // correct endpoint based on payment type
+    const url = '{% if type=="provider" %}/admin/create-transfer-session/{{ booking_id }}{% else %}/admin/create-refund-session/{{ booking_id }}{% endif %}';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Success show message and redirect
+      alert(result.message);
+      window.location.href = "{{ url_for('manage_payments') }}";
+    } else {
+      // Error reset button and show error
+      alert('Failed: ' + result.error);
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  } catch (error) {
+    alert('Network error: ' + error.message);
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+});
+</script>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .container {
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(10, 76, 104, 0.1);
+    background: #ffffff;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem 2rem;
+    border-radius: 15px 15px 0 0 !important;
+    position: relative;
+  }
+
+  .card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .card-header h4 {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .card-body {
+    padding: 2rem 2rem;
+    background: #ffffff;
+  }
+
+  .payment-details h5 {
+    color: #0a4c68;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .payment-details h5::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #0a4c68, #0d5a7d);
+    border-radius: 2px;
+  }
+
+  .table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(10, 76, 104, 0.08);
+    border: 1px solid #e9ecef;
+    margin-bottom: 1.5rem;
+  }
+
+  .table th {
+    background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .table td {
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    border-bottom: 1px solid #f8f9fa;
+    color: #495057;
+  }
+
+  .table tbody tr:nth-child(even) {
+    background: #f8f9fa;
+  }
+
+  .table tbody tr:hover {
+    background: linear-gradient(135deg, #f1f3f4 0%, #e9ecef 100%);
+    transform: scale(1.01);
+    transition: all 0.3s ease;
+  }
+
+  .table-success, .table-primary {
+    background: transparent !important;
+  }
+
+  .table-success td, .table-primary td {
+    background: transparent !important;
+  }
+
+  .alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    color: #856404;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.15);
+    position: relative;
+  }
+
+  .alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #ffc107 0%, #ff8f00 100%);
+    border-radius: 2px 0 0 2px;
+  }
+
+  .alert i {
+    color: #ff8f00;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+  }
+
+  .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.875rem 1.75rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(10, 76, 104, 0.2);
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #0a4c68 0%, #0d5a7d 100%);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0d5a7d 0%, #0a4c68 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10, 76, 104, 0.3);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #6c757d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .payment-details, .alert, .btn {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .payment-details {
+    animation-delay: 0.15s;
+  }
+
+  .alert {
+    animation-delay: 0.3s;
+  }
+
+  .btn {
+    animation-delay: 0.45s;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .card-body {
+      padding: 1.5rem 1.25rem;
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+    }
+
+    .card-header h4 {
+      font-size: 1.3rem;
+    }
+
+    .payment-details h5 {
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .table th, .table td {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="fw-bold mb-4" style="color: #0B506D;">Manage Services</h2>
+  <p class="text-muted">Add, update, or remove services available on Servizo.</p>
+
+  <style>
+    .modern-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: white;
+    }
+
+    .modern-table thead th {
+      background: linear-gradient(135deg, #0B506D, #094861);
+      color: white;
+      font-weight: 600;
+      padding: 15px 12px;
+      border: none;
+      text-align: center;
+    }
+
+    .modern-table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .modern-table tbody tr:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-table tbody td {
+      padding: 12px;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .modern-table .btn {
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin: 2px;
+      font-size: 11px;
+      padding: 5px 8px;
+    }
+
+    .modern-table .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+
+  <!-- Add Service Form -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3" style="color: #0B506D;">Add New Service</h5>
+      <form method="POST" action="{{ url_for('manage_services') }}">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <input type="text" class="form-control" name="name" placeholder="Service Name" required>
+          </div>
+          <div class="col-md-5">
+            <input type="text" class="form-control" name="description" placeholder="Description" required>
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control" name="suggested_price" placeholder="Suggested Price" min="0" step="100">
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn w-100" style="background-color: #0B506D; color: white; border-color: #0B506D;">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Services Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="fw-bold mb-3" style="color: #0B506D;">Existing Services</h5>
+      {% if services %}
+      <table class="table modern-table align-middle">
+        <thead class="table-light">
+          <tr>
+            <th style="width:5%;">ID</th>
+            <th style="width:20%;">Service Name</th>
+            <th style="width:35%;">Description</th>
+            <th style="width:15%;">Suggested Price (Rs.)</th>
+            <th style="width:25%;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for service in services %}
+          <tr>
+            <form method="POST" action="{{ url_for('update_service', service_id=service.ServiceID) }}">
+              <td class="fw-bold text-center">{{ service.ServiceID }}</td>
+              <td>
+                <input type="text" name="name" class="form-control form-control-sm"
+                       value="{{ service.Name }}" required>
+              </td>
+              <td>
+                <input type="text" name="description" class="form-control form-control-sm"
+                       value="{{ service.Description }}" required>
+              </td>
+              <td>
+                <input type="number" name="suggested_price" class="form-control form-control-sm text-center"
+                       step="100" min="0" value="{{ service.SuggestedPrice or '' }}">
+              </td>
+              <td class="text-center">
+                <div class="btn-group">
+                  <button type="submit" class="btn btn-sm btn-warning">Update</button>
+                  <a href="{{ url_for('delete_service', service_id=service.ServiceID) }}" 
+                     class="btn btn-sm btn-danger">Delete</a>
+                </div>
+              </td>
+            </form>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted">No services available.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+<style>
+  table input {
+    min-width: 100%;
+    padding: 4px 6px;
+  }
+
+  .btn-group .btn {
+    margin-right: 4px;
+  }
+
+  .table thead th {
+    vertical-align: middle;
+    text-align: center;
+    background-color: #f8f9fa;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
+
+  .btn-warning {
+    color:white;
+    background-color: #0a4c68 ;
+    border-color:#0a4c68 ;
+  }
+
+  .btn-warning:hover {
+    background-color:#0a4c68 ;
+  }
+</style>
+{% endblock %}

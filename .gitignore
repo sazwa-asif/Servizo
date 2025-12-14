@@ -1,0 +1,7 @@
+# Ignore secrets
+backend/config.py
+.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
