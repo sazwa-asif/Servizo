@@ -194,7 +194,9 @@ Register/Login → Create Offer → Payment → Chat → Service Completion → 
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/e34525a7-62e7-4312-a7c1-3197d294e094" />
 
 ## Manage Service Provider (Admin)
-<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/057cea1f-9c72-410b-b618-a0d59d4a7091" />
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/a01d1633-2aa9-4bb4-9215-1c2c7f0473a9" />
+
+
 
 ## Manage Services (Admin)
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/626ce1a4-2cd7-439b-bfb1-69b9262d35ae" />
