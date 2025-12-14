@@ -171,7 +171,7 @@ Register/Login → Create Offer → Payment → Chat → Service Completion → 
 
 ## Landing Page
 
-<img width="450" height="700" alt="image" src="https://github.com/user-attachments/assets/b75ded4b-d603-42e2-808a-b03dce2978d7" />
+<img width="450" height="700" alt="image" src="https://github.com/user-attachments/assets/a1c4954e-62c4-4189-ba95-a78e483cc5fe" />
 
 
 ## Login Page
@@ -186,8 +186,24 @@ Register/Login → Create Offer → Payment → Chat → Service Completion → 
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/ada5d092-3724-4f35-a529-aa3a0db1e3f5" />
 
 
-### Customer Dashboard
+## Customer Dashboard
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/7cb1c98f-df0a-4136-b353-0aee466f4621" />
+
+
+## Commission Reports (Admin)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/e34525a7-62e7-4312-a7c1-3197d294e094" />
+
+## Manage Service Provider (Admin)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/057cea1f-9c72-410b-b618-a0d59d4a7091" />
+
+## Manage Services (Admin)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/626ce1a4-2cd7-439b-bfb1-69b9262d35ae" />
+
+## Manage Payments (Admin)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/51f39eed-dc47-4155-8d19-86b8e11e4bd0" />
+
+## View Profile (Service Provider)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/8ec5fccd-317a-4734-b7a3-6d4081a7f7c2" />
 
 
 
