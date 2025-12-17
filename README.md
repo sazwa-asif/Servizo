@@ -197,7 +197,6 @@ Register/Login → Create Offer → Payment → Chat → Service Completion → 
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/a01d1633-2aa9-4bb4-9215-1c2c7f0473a9" />
 
 
-
 ## Manage Services (Admin)
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/626ce1a4-2cd7-439b-bfb1-69b9262d35ae" />
 
@@ -206,6 +205,14 @@ Register/Login → Create Offer → Payment → Chat → Service Completion → 
 
 ## View Profile (Service Provider)
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/8ec5fccd-317a-4734-b7a3-6d4081a7f7c2" />
+
+## Service Provider (Customer Offers)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/5c0df6d2-5236-4a39-89f0-0813acc753b3" />
+
+## Service Provider (Manage Jobs)
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/8d3c24e3-ff25-480f-b5af-782c62592731" />
+
+
 
 
 
